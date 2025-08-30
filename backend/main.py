@@ -5,10 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import requests, uuid
-from groq import Groq  # Groq API client
+from groq import Groq
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+import json
 
 # Load environment variables
 load_dotenv()
@@ -47,6 +48,7 @@ def run_task(task_id: str):
     # Use Selenium to fetch fully rendered HTML
     chrome_options = Options()
     chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(task["url"])
@@ -80,7 +82,6 @@ def run_task(task_id: str):
         temperature=0
     )
     # Try to parse the response as JSON
-    import json
     content = response.choices[0].message.content
     try:
         result = json.loads(content)
