@@ -1,173 +1,776 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { motion, useViewportScroll, useTransform } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Globe, Zap, Brain, ChevronDown, Star, Users, TrendingUp, Shield, Clock, Code, Database, Sparkles, CheckCircle, Quote, Award, Rocket, Target, BarChart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
-  const { scrollYProgress } = useViewportScroll();
-  const blobY = useTransform(scrollYProgress, [0, 1], [0, 200]); // scroll parallax
+function Home() {
+  const [mounted, setMounted] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
+  const { scrollYProgress } = useScroll();
+  const router = useRouter();
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -150]);
+  const featuresY = useTransform(scrollYProgress, [0.2, 0.8], [100, -100]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const features = [
     {
       title: "Effortless Data Extraction",
-      desc: "No more manual scraping. Define your goal, and let AI handle the complexity of extracting exactly what you need.",
-      color: "from-blue-400 to-blue-600",
-      icon: "🌐",
+      description: "No more manual scraping. Define your goal, and let AI handle the complexity of extracting exactly what you need.",
+      icon: Globe,
+      gradient: "from-blue-400 to-cyan-500",
+      delay: 0.1,
     },
     {
-      title: "AI-Powered Insights",
-      desc: "Beyond raw data, our system uses advanced AI to process and structure results according to your specific requirements.",
-      color: "from-green-400 to-green-600",
-      icon: "🤖",
+      title: "AI-Powered Insights", 
+      description: "Beyond raw data, our system uses advanced AI to process and structure results according to your specific requirements.",
+      icon: Brain,
+      gradient: "from-purple-400 to-pink-500",
+      delay: 0.2,
     },
     {
       title: "API on Demand",
-      desc: "Receive a unique API endpoint for each task, allowing seamless integration into your applications.",
-      color: "from-purple-400 to-purple-600",
-      icon: "⚡",
+      description: "Receive a unique API endpoint for each task, allowing seamless integration into your applications.",
+      icon: Zap,
+      gradient: "from-orange-400 to-red-500",
+      delay: 0.3,
     },
   ];
 
+  const useCases = [
+    { title: "E-commerce Price Monitoring", desc: "Track competitor pricing across multiple platforms", icon: BarChart, color: "text-cyber-blue" },
+    { title: "Lead Generation", desc: "Extract contact information from business directories", icon: Target, color: "text-cyber-green" },
+    { title: "Market Research", desc: "Analyze social media sentiment and trends", icon: TrendingUp, color: "text-cyber-purple" },
+    { title: "Job Aggregation", desc: "Collect job postings from multiple job boards", icon: Users, color: "text-cyber-pink" },
+    { title: "Real Estate Data", desc: "Monitor property listings and market trends", icon: Database, color: "text-cyber-blue" },
+    { title: "News Monitoring", desc: "Track news mentions and media coverage", icon: Globe, color: "text-cyber-green" }
+  ];
+
+  const stats = [
+    { value: "99.9%", label: "Uptime", icon: TrendingUp },
+    { value: "Enterprise", label: "Grade Security", icon: Zap },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        stiffness: 100,
+        damping: 12,
+      },
+    },
+  };
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-950 via-purple-900 to-black text-white overflow-x-hidden">
-      
-      {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center min-h-screen text-center px-6 overflow-hidden">
-        
-        {/* Animated floating blobs */}
-        <motion.div
-          className="absolute -top-60 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-pink-500 to-purple-600 rounded-full blur-3xl opacity-40"
-          style={{ y: blobY }}
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-[-200px] right-[-200px] w-[600px] h-[600px] bg-gradient-to-tr from-blue-500 to-teal-400 rounded-full blur-3xl opacity-30"
-          style={{ y: blobY }}
-          animate={{ rotate: [360, 0] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden relative">
+      {/* Animated Background Elements */}
+      <motion.div
+        className="fixed inset-0 pointer-events-none"
+        style={{ y: backgroundY }}
+      >
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-2000" />
+      </motion.div>
 
-        {/* Hero Text */}
-        <motion.h1
-          initial={{ opacity: 0, y: -50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-6xl md:text-7xl font-extrabold leading-tight mb-6"
-        >
-          AI-Powered{" "}
-          <span className="bg-gradient-to-r from-blue-400 to-pink-500 bg-clip-text text-transparent">
-            Web Scraper
-          </span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="text-xl text-gray-200 max-w-2xl mb-10"
-        >
-          Turn any website into a structured API with intelligent AI processing.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <Link href="/scraper">
-            <Button className="px-10 py-6 text-lg rounded-2xl shadow-lg bg-gradient-to-r from-blue-500 to-pink-500 hover:from-pink-500 hover:to-blue-500 transition transform hover:scale-105 animate-pulse">
-              🚀 Get Started
-            </Button>
-          </Link>
-        </motion.div>
-
-        {/* Floating neon icons */}
-        <motion.div
-          className="absolute top-20 left-10 text-4xl opacity-50 animate-bounce-slow"
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          🌐
-        </motion.div>
-        <motion.div
-          className="absolute top-1/2 right-20 text-5xl opacity-40 animate-spin-slow"
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        >
-          ⚡
-        </motion.div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-transparent to-gray-950">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl font-bold mb-4">Why Choose Us?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Smarter, faster, and easier web scraping powered by AI.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-          {features.map((feature, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.2 }}
-              viewport={{ once: true }}
+      {/* Navigation */}
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/50 border-b border-white/10"
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
+          >
+            Promptly
+          </motion.div>
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
+            <a href="#stats" className="text-gray-300 hover:text-white transition-colors">Stats</a>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
             >
-              <Card className="bg-gray-800/30 border border-gray-700 rounded-2xl backdrop-blur-lg shadow-xl transform hover:scale-105 hover:rotate-1 transition">
-                <CardContent className="p-8 flex flex-col items-center">
-                  <span className="text-5xl mb-4 animate-bounce">{feature.icon}</span>
-                  <h3 className={`text-2xl font-bold mb-4 bg-gradient-to-r ${feature.color} bg-clip-text text-transparent`}>
+              Get Started
+            </motion.button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Hero Section */}
+      <motion.section 
+        style={{ y: heroY }}
+        className="relative flex flex-col items-center justify-center min-h-screen pt-20 px-6"
+      >
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="text-center max-w-5xl mx-auto"
+        >
+          {/* Hero Badge */}
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8"
+          >
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-sm font-medium">Live & Ready to Scale</span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1
+            variants={itemVariants}
+            className="text-6xl md:text-8xl font-black leading-none mb-8"
+          >
+            <span className="block">AI-Powered</span>
+            <span className="block bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient">
+              Web Scraper
+            </span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            variants={itemVariants}
+            className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto"
+          >
+            Transform any website into a structured API with intelligent AI processing. 
+            <span className="text-blue-400 font-semibold"> No coding required.</span>
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all"
+              onClick={() => router.push('/scraper')}
+            >
+              <span className="flex items-center space-x-2">
+                <span>Start Scraping Free</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-lg backdrop-blur-sm hover:bg-white/10 transition-all"
+            >
+              Watch Demo
+            </motion.button>
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 1 }}
+            className="absolute bottom-[30px] left-1/2 transform -translate-x-1/2"
+          >
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex flex-col items-center space-y-2 text-gray-400"
+            >
+              <span className="text-sm">Scroll to explore</span>
+              <ChevronDown className="w-5 h-5" />
+            </motion.div>
+          </motion.div>
+        </motion.div>
+
+        {/* Floating Elements */}
+        <motion.div
+          animate={{ 
+            rotate: [0, 360],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-1/4 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/30 to-purple-500/30 rounded-2xl backdrop-blur-sm border border-white/10"
+        />
+        <motion.div
+          animate={{ 
+            rotate: [360, 0],
+            y: [0, -20, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/3 right-16 w-16 h-16 bg-gradient-to-br from-pink-400/30 to-orange-500/30 rounded-full backdrop-blur-sm border border-white/10"
+        />
+      </motion.section>
+
+      {/* Stats Section */}
+      <motion.section
+        id="stats"
+        style={{ y: featuresY }}
+        className="py-20 px-6 relative"
+      >
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto"
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                className="text-center group"
+              >
+                <div className="relative mb-4">
+                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10 group-hover:border-white/30 transition-all">
+                    <stat.icon className="w-8 h-8 text-blue-400 group-hover:text-purple-400 transition-colors" />
+                  </div>
+                </div>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.1 + 0.3, type: "spring" }}
+                  className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2"
+                >
+                  {stat.value}
+                </motion.div>
+                <div className="text-gray-400 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Use Cases Section */}
+      <motion.section className="py-24 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
+              Endless{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+                Possibilities
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              From e-commerce to research, our platform adapts to your unique data extraction needs
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {useCases.map((useCase, index) => {
+              // Assign gradient and icon bg based on color
+              let cardGradient = "from-blue-900/60 to-blue-700/40";
+              let iconGradient = "from-blue-400 to-cyan-400";
+              if (useCase.color === "text-cyber-green") {
+                cardGradient = "from-green-900/60 to-green-700/40";
+                iconGradient = "from-green-400 to-emerald-400";
+              } else if (useCase.color === "text-cyber-purple") {
+                cardGradient = "from-purple-900/60 to-purple-700/40";
+                iconGradient = "from-purple-400 to-pink-400";
+              } else if (useCase.color === "text-cyber-pink") {
+                cardGradient = "from-pink-900/60 to-pink-700/40";
+                iconGradient = "from-pink-400 to-purple-400";
+              }
+
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 80 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  whileHover={{ y: -8, scale: 1.04 }}
+                  className={`group relative p-8 rounded-3xl border border-white/10 shadow-lg bg-gradient-to-br ${cardGradient} hover:from-white/10 hover:to-white/20 transition-all duration-300 backdrop-blur-xl`}
+                >
+                  <div className={`w-14 h-14 flex items-center justify-center rounded-2xl mb-6 bg-gradient-to-br ${iconGradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <useCase.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{useCase.title}</h3>
+                  <p className="text-gray-300 text-sm group-hover:text-white transition-colors">{useCase.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Detailed Features Section */}
+      <motion.section className="py-24 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full text-green-300 text-sm font-semibold mb-6"
+            >
+              🚀 Complete Feature Set
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
+              Everything You{' '}
+              <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                Need
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              From simple data extraction to complex AI processing, we've got every aspect of web scraping covered.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Smart Rate Limiting",
+                description: "Intelligent request throttling that adapts to website behavior, ensuring reliable data extraction without getting blocked.",
+                icon: "⏱️",
+                gradient: "from-blue-400 to-cyan-500",
+              },
+              {
+                title: "Real-time Monitoring",
+                description: "Live dashboard showing scraping progress, success rates, and detailed analytics for all your extraction tasks.",
+                icon: "📊",
+                gradient: "from-green-400 to-emerald-500",
+              },
+              {
+                title: "Data Validation",
+                description: "Automatic quality checks and data validation to ensure accuracy and consistency in your extracted information.",
+                icon: "✅",
+                gradient: "from-purple-400 to-violet-500",
+              },
+              {
+                title: "Custom Scheduling",
+                description: "Set up automated scraping schedules with flexible timing options to keep your data fresh and up-to-date.",
+                icon: "📅",
+                gradient: "from-orange-400 to-red-500",
+              },
+              {
+                title: "Multi-format Export",
+                description: "Export your data in JSON, CSV, XML, or any custom format that fits your workflow and integration needs.",
+                icon: "📁",
+                gradient: "from-pink-400 to-rose-500",
+              },
+              {
+                title: "Enterprise Security",
+                description: "Bank-level encryption, secure API keys, and compliance with data protection regulations for peace of mind.",
+                icon: "🔒",
+                gradient: "from-indigo-400 to-blue-500",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 80, rotateX: -15 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 100 
+                }}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.02,
+                  transition: { duration: 0.3 }
+                }}
+                className="group relative"
+              >
+                <div className="relative p-8 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl border border-white/10 group-hover:border-white/20 transition-all duration-500 h-full">
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500`} />
+                  
+                  {/* Icon */}
+                  <div className="relative mb-6">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-110 transition-transform duration-300 text-2xl`}>
+                      {feature.icon}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-bold mb-4 group-hover:text-white transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-300 text-center">{feature.desc}</p>
-                </CardContent>
-              </Card>
+                  <p className="text-gray-300 leading-relaxed group-hover:text-gray-200 transition-colors text-sm">
+                    {feature.description}
+                  </p>
+
+                  {/* Hover Arrow */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    whileHover={{ opacity: 1, x: 0 }}
+                    className="absolute bottom-6 right-6 text-purple-400"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Features Section */}
+      <motion.section
+        id="features"
+        className="py-24 px-6 relative"
+      >
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm font-semibold mb-6"
+            >
+              ✨ Powered by Advanced AI
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
+              Why Choose{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Promptly?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Experience the future of web scraping with our intelligent platform that learns and adapts to any website structure.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 100, rotateX: -15 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{ 
+                  duration: 0.8, 
+                  delay: feature.delay,
+                  type: "spring",
+                  stiffness: 100 
+                }}
+                whileHover={{ 
+                  y: -10, 
+                  rotateY: 5,
+                  transition: { duration: 0.3 }
+                }}
+                className="group relative"
+              >
+                <div className="relative p-8 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl border border-white/10 group-hover:border-white/20 transition-all duration-500 h-full">
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500`} />
+                  
+                  {/* Icon */}
+                  <div className="relative mb-6">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-110 transition-transform duration-300`}>
+                      <feature.icon className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-2xl font-bold mb-4 group-hover:text-white transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed group-hover:text-gray-200 transition-colors">
+                    {feature.description}
+                  </p>
+
+                  {/* Hover Arrow */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    whileHover={{ opacity: 1, x: 0 }}
+                    className="absolute bottom-6 right-6 text-purple-400"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* How It Works Section */}
+      <motion.section className="py-24 px-6 relative">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-5xl md:text-6xl font-black mb-6">
+              How It{' '}
+              <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                Works
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Three simple steps to transform any website into your personal API
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: "01", title: "Enter URL", desc: "Simply paste the website URL you want to scrape", color: "from-blue-400 to-cyan-500" },
+              { step: "02", title: "Define Goals", desc: "Tell our AI what data you need in plain English", color: "from-purple-400 to-pink-500" },
+              { step: "03", title: "Get API", desc: "Receive your custom API endpoint instantly", color: "from-green-400 to-emerald-500" },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="relative text-center group"
+              >
+                <div className="relative">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className={`w-20 h-20 mx-auto mb-6 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-lg`}
+                  >
+                    {item.step}
+                  </motion.div>
+                  
+                  {index < 2 && (
+                    <div className="hidden md:block absolute top-10 left-full w-full h-0.5 bg-gradient-to-r from-gray-600 to-transparent" />
+                  )}
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-4 group-hover:text-blue-400 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 group-hover:text-gray-300 transition-colors">
+                  {item.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* FAQ Section */}
+      <motion.section className="py-24 px-6 relative">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-5xl md:text-6xl font-black mb-6">
+              Frequently Asked{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+                Questions
+              </span>
+            </h2>
+          </motion.div>
+
+          <div className="space-y-8">
+          {[
+            {
+              question: "How accurate is the AI-powered extraction?",
+              answer: "Our AI achieves 99%+ accuracy across most websites by understanding context, structure, and content semantics. It continuously learns and improves from each extraction."
+            },
+            {
+              question: "Do you handle dynamic content and JavaScript?",
+              answer: "Yes! Our system fully renders JavaScript and handles dynamic content, AJAX requests, and single-page applications just like a real browser."
+            },
+            {
+              question: "What about rate limiting and getting blocked?",
+              answer: "We use advanced techniques including rotating proxies, intelligent request timing, and browser fingerprint randomization to avoid detection and blocks."
+            },
+            {
+              question: "Can I extract data from password-protected sites?",
+              answer: "Yes, you can provide authentication credentials or session tokens. We support various authentication methods including OAuth, API keys, and custom headers."
+            },
+            {
+              question: "Is my data secure and private?",
+              answer: "Absolutely. All data is encrypted in transit and at rest. We're SOC 2 compliant and never store your extracted data longer than necessary for processing."
+            }
+          ].map((faq, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-blue-900/40 to-blue-700/20 shadow-lg backdrop-blur-xl hover:from-white/10 hover:to-white/20 transition-all"
+            >
+              <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+                {faq.question}
+              </h3>
+              <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
             </motion.div>
           ))}
+          </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* CTA Footer */}
-      <footer className="py-16 text-center bg-black/80 border-t border-gray-800 relative overflow-hidden">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="text-gray-400 mb-6"
-        >
-          Ready to supercharge your data extraction?
-        </motion.p>
-        <Link href="/scraper">
-          <Button className="px-8 py-5 text-lg rounded-2xl shadow-lg bg-gradient-to-r from-pink-500 to-blue-500 hover:from-blue-500 hover:to-pink-500 transition transform hover:scale-105">
-            Start Scraping Now →
-          </Button>
-        </Link>
-        <p className="mt-10 text-gray-500 text-sm">© 2025 AI-Powered Web Scraper. All rights reserved.</p>
+      {/* CTA Section */}
+      <motion.section className="py-24 px-6 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative p-12 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-xl rounded-3xl border border-white/10"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-600/5 rounded-3xl" />
+            
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-4xl md:text-5xl font-black mb-6"
+            >
+              Ready to{' '}
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                Supercharge
+              </span>{' '}
+              Your Data?
+            </motion.h2>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto"
+            >
+              Join thousands of developers who trust Promptly for their data extraction needs
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-lg shadow-xl hover:shadow-purple-500/30 transition-all"
+              >
+                Start Free Trial
+              </motion.button>
+              <span className="text-gray-400 text-sm">No credit card required</span>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.section>
 
-        {/* Floating neon particles */}
-        <motion.div
-          className="absolute top-10 left-1/3 w-3 h-3 bg-blue-400 rounded-full opacity-70"
-          animate={{ y: [0, -20, 0], x: [0, 15, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-1/4 w-4 h-4 bg-pink-500 rounded-full opacity-60"
-          animate={{ y: [0, 15, 0], x: [0, -15, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
+      {/* Footer */}
+      <footer className="py-16 px-6 border-t border-white/10 bg-black/20 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-6 md:mb-0"
+            >
+              Promptly
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center space-x-8"
+            >
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a>
+            </motion.div>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 pt-8 border-t border-white/10 text-center text-gray-500"
+          >
+            © 2025 Promptly. All rights reserved. Built with passion for developers.
+          </motion.div>
+        </div>
       </footer>
+
+      {/* Animated Progress Bar */}
+      <motion.div
+        className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600 transform origin-left z-50"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      {/* Floating Action Button */}
+      <motion.button
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 3 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/25 z-40"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        <ChevronDown className="w-6 h-6 text-white rotate-180" />
+      </motion.button>
+
     </div>
   );
 }
+
+export default Home;

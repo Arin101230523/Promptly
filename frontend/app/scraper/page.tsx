@@ -15,7 +15,7 @@ export default function ScraperPage() {
     setError('');
     setResult('');
     try {
-      const response = await fetch(`http://localhost:8000/create-task/`, {
+      const response = await fetch(`https://promptly-ac4x.onrender.com/create-task/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export default function ScraperPage() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`http://localhost:8000${endpoint}`);
+      const response = await fetch(`https://promptly-ac4x.onrender.com${endpoint}`);
       const data = await response.json();
       if (response.ok) {
         setResult(JSON.stringify(data, null, 2));
