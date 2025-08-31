@@ -1,0 +1,101 @@
+import json
+import re
+from urllib.parse import urljoin, urlparse
+from bs4 import BeautifulSoup
+from selenium.common.exceptions import TimeoutException, WebDriverException
+
+def fetch_page_html(driver, url: str, timeout=10) -> str:
+    """Fetch page using Selenium with timeout."""
+    try:
+        driver.set_page_load_timeout(timeout)
+        driver.get(url)
+        return driver.page_source
+    except TimeoutException:
+        print(f"Timeout fetching {url}")
+        return ""
+    except WebDriverException as e:
+        print(f"WebDriver error fetching {url}: {e}")
+        return ""
+    except Exception as e:
+        print(f"Error fetching {url}: {e}")
+        return ""
+
+def extract_visible_text(html: str) -> str:
+    """Extract visible text from HTML."""
+    if not html:
+        return ""
+    soup = BeautifulSoup(html, "html.parser")
+    for script in soup(["script", "style"]):
+        script.decompose()
+    return soup.get_text(separator="\n", strip=True)
+
+def extract_links_with_context(base_url: str, html: str) -> dict:
+    """Extract internal links with their anchor text and surrounding context."""
+    if not html:
+        return {}
+    
+    soup = BeautifulSoup(html, "html.parser")
+    domain = urlparse(base_url).netloc
+    links_with_context = {}
+    
+    for a in soup.find_all("a", href=True):
+        try:
+            url = urljoin(base_url, a["href"])
+            # Remove fragment and trailing slash for consistency
+            url = url.split("#")[0].rstrip("/")
+            parsed = urlparse(url)
+            
+            # Only include URLs from the same domain
+            if parsed.netloc == domain and parsed.scheme in ['http', 'https']:
+                # Get anchor text
+                anchor_text = a.get_text(strip=True)
+                
+                # Get surrounding context (parent element text)
+                parent_text = ""
+                if a.parent:
+                    parent_text = a.parent.get_text(strip=True)[:200]  # Limit context length
+                
+                # Get any title or aria-label attributes
+                title = a.get('title', '')
+                aria_label = a.get('aria-label', '')
+                
+                links_with_context[url] = {
+                    'anchor_text': anchor_text,
+                    'parent_context': parent_text,
+                    'title': title,
+                    'aria_label': aria_label,
+                    'url_path': parsed.path
+                }
+        except Exception as e:
+            print(f"Error processing link {a.get('href')}: {e}")
+            continue
+    
+    return links_with_context
+
+def extract_first_json(text: str) -> dict:
+    """Extract the first valid JSON object from a string."""
+    try:
+        # Remove code block markers if present
+        if text.startswith("```"):
+            lines = text.split('\n')
+            text = '\n'.join(lines[1:-1]) if len(lines) > 2 else text
+        # Find first {...} block
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            json_str = match.group(0)
+            return json.loads(json_str)
+        # Fallback: try to parse whole text
+        return json.loads(text)
+    except Exception as e:
+        print(f"extract_first_json failed: {e}")
+        raise
+
+def clamp_confidence(conf):
+    """Clamp/normalize confidence to 0-10 range."""
+    try:
+        conf = float(conf)
+        if 0 < conf < 1:
+            conf = conf * 10
+        return max(0, min(10, conf))
+    except Exception:
+        return 0
