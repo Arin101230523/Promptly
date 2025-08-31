@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Globe, Zap, Brain, ChevronDown, Star, Users, TrendingUp, Shield, Clock, Code, Database, Sparkles, CheckCircle, Quote, Award, Rocket, Target, BarChart } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Globe, Zap, Brain, ChevronDown, Users, TrendingUp, Database, Target, BarChart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 function Home() {
   const [mounted, setMounted] = useState(false);
-  const [activeSection, setActiveSection] = useState(0);
   const { scrollYProgress } = useScroll();
   const router = useRouter();
   
@@ -356,7 +355,7 @@ function Home() {
               </span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              From simple data extraction to complex AI processing, we've got every aspect of web scraping covered.
+              From simple data extraction to complex AI processing, we&apos;ve got every aspect of web scraping covered.
             </p>
           </motion.div>
 
