@@ -8,7 +8,7 @@ load_dotenv()
 
 app = FastAPI()
 
-origins = ["http://localhost", "http://localhost:3000"]
+origins = ["http://localhost", "http://localhost:3000", "https://promptly-sable.vercel.app"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
