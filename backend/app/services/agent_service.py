@@ -68,13 +68,7 @@ Return only a JSON object:
         
     except Exception as e:
         print(f"Error scoring URL {url}: {e}")
-        # Fallback to simple heuristic
-        path_lower = url.lower()
-        if any(term in goal.lower() for term in ['component', 'ui', 'element']) and 'component' in path_lower:
-            return 8.0, "Heuristic: URL contains 'component'"
-        elif any(term in path_lower for term in ['doc', 'api', 'reference', 'guide']):
-            return 6.0, "Heuristic: Documentation page"
-        return 3.0, "Heuristic: Default score"
+        return 0.0, "AI scoring failed"
 
 def analyze_landing_page_completeness(text: str, goal: str, links_context: dict) -> dict:
     """Analyze if the landing page likely has all needed information or if we need to explore further."""

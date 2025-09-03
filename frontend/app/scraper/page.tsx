@@ -10,12 +10,15 @@ export default function ScraperPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   const createTask = async () => {
     setLoading(true);
     setError('');
     setResult('');
     try {
-      const response = await fetch(`https://promptly-ac4x.onrender.com/create-task/`, {
+      console.log('Sending create-task request...');
+      const response = await fetch(`${backendUrl}/create-task/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,6 +38,7 @@ export default function ScraperPage() {
         }
       }
     } catch (err: any) {
+      console.error('Network error:', err);
       setError(err.message || 'Network error occurred');
     } finally {
       setLoading(false);
@@ -45,7 +49,7 @@ export default function ScraperPage() {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`https://promptly-ac4x.onrender.com${endpoint}`);
+      const response = await fetch(`${backendUrl}${endpoint}`);
       const data = await response.json();
       if (response.ok) {
         setResult(JSON.stringify(data, null, 2));
