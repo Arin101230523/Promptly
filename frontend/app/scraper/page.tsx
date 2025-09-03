@@ -42,6 +42,7 @@ export default function ScraperPage() {
       setError(err.message || 'Network error occurred');
     } finally {
       setLoading(false);
+      console.log('Create-task request completed');
     }
   };
 
@@ -49,6 +50,7 @@ export default function ScraperPage() {
     setLoading(true);
     setError('');
     try {
+      console.log('Running task...')
       const response = await fetch(`${backendUrl}${endpoint}`);
       const data = await response.json();
       if (response.ok) {
@@ -68,6 +70,7 @@ export default function ScraperPage() {
       setError(err.message || 'Network error occurred');
     } finally {
       setLoading(false);
+      console.log('Run-task request completed');
     }
   };
 
