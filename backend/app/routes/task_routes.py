@@ -182,17 +182,14 @@ def update_task(task_id: str, update: TaskUpdate):
                     }
                 }
             )
-        if task["status"] == "completed":
-            # Set status to 'modified' and clear result
-            update_fields = {k: v for k, v in update.dict().items() if v is not None}
-            update_fields["status"] = "modified"
+        
+        # Set status to 'modified' and clear result
+        update_fields = {k: v for k, v in update.dict().items() if v is not None}
+        update_fields["status"] = "modified"
+        if update_fields.get("result") is not None:
             update_fields["result"] = None
-            tasks_collection.update_one({"_id": task_id}, {"$set": update_fields})
-            return {"message": "Task updated. Status set to 'modified'. Result cleared."}
-        else:
-            update_fields = {k: v for k, v in update.dict().items() if v is not None}
-            tasks_collection.update_one({"_id": task_id}, {"$set": update_fields})
-            return {"message": "Task updated."}
+        tasks_collection.update_one({"_id": task_id}, {"$set": update_fields})
+        return {"message": "Task updated. Status set to 'modified'. Result cleared."}
     except HTTPException as e:
         raise e
     except Exception as e:
