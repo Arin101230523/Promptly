@@ -1,16 +1,54 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
-import { FaTrash, FaEdit, FaSave, FaTimes, FaRedo } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  Trash2, 
+  Edit3, 
+  Save, 
+  X, 
+  RotateCcw, 
+  Play, 
+  Globe, 
+  Zap,
+  Terminal,
+  CheckCircle,
+  AlertCircle,
+  Loader,
+  Send
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+interface Message {
+  role: 'user' | 'bot';
+  text: string;
+  endpoint?: string;
+  taskId?: string;
+  result?: string;
+  status?: 'created' | 'running' | 'completed' | 'error';
+  goal?: string;
+  url?: string;
+}
 
 export default function ScraperPage() {
   const [url, setUrl] = useState('');
   const [goal, setGoal] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [messages, setMessages] = useState<any[]>([]); // {role: 'user'|'bot', text, endpoint?, taskId?, result?, status?, editing?}
+  const [messages, setMessages] = useState<Message[]>([]);
   const [editIdx, setEditIdx] = useState<number|null>(null);
   const [editGoal, setEditGoal] = useState('');
   const [editUrl, setEditUrl] = useState('');
+  const router = useRouter();
+
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  // Scroll to bottom on new message
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   // Delete endpoint
   const deleteTask = async (msgIdx: number) => {
     const msg = messages[msgIdx];
@@ -75,16 +113,7 @@ export default function ScraperPage() {
       setLoading(false);
     }
   };
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-  // Scroll to bottom on new message
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
   const createTask = async (goalText: string) => {
     setLoading(true);
     setError('');
@@ -104,7 +133,8 @@ export default function ScraperPage() {
           endpoint: data.endpoint,
           taskId: data.task_id,
           goal: goalText,
-          status: 'created'
+          status: 'created',
+          url: url
         }]);
       } else {
         const errorMsg = data.detail && Array.isArray(data.detail)
@@ -172,147 +202,232 @@ export default function ScraperPage() {
     }
   };
 
+  const getStatusIcon = (status?: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'running':
+        return <Loader className="w-4 h-4 text-blue-500 animate-spin" />;
+      case 'error':
+        return <AlertCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <Terminal className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'completed':
+        return 'border-green-200 bg-green-50';
+      case 'running':
+        return 'border-blue-200 bg-blue-50';
+      case 'error':
+        return 'border-red-200 bg-red-50';
+      default:
+        return 'border-gray-200 bg-gray-50';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950 flex flex-col items-center justify-center p-4">
-      <h1 className="text-5xl font-extrabold text-white mb-8 animate-fade-in">Promptly Chat Scraper</h1>
-      <div className="w-full max-w-2xl bg-gray-800 rounded-xl shadow-2xl p-8 flex flex-col space-y-6 animate-scale-in">
-        <div className="flex flex-col space-y-4 mb-2">
-          <input
-            type="text"
-            placeholder="Enter URL (e.g., https://news.ycombinator.com/)"
-            className="p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-        </div>
-        <div className="flex flex-col space-y-2 mb-4">
-          <div className="flex items-center">
-            <input
-              type="text"
-              placeholder="Describe your goal (e.g., List top 5 story titles)"
-              className="flex-1 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && goal.trim() && url.trim()) {
-                  createTask(goal.trim());
-                }
-              }}
-              disabled={!url}
-            />
-            <button
-              onClick={() => { if (goal.trim() && url.trim()) createTask(goal.trim()); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-              disabled={loading || !url || !goal}
-            >
-              {loading ? '...' : 'Send'}
-            </button>
+  <div className="min-h-screen bg-slate-900 flex flex-col">
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 px-6 py-4 bg-slate-900 backdrop-blur-xl">
+        <div className="max-w-4xl mx-auto flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+            <Zap className="w-6 h-6 text-white cursor-pointer" onClick = {()=>(router.push('/'))} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent cursor-pointer" onClick={() => router.push("/")}>Promptly</h1>
+            <p className="text-sm text-gray-300">Intelligent web scraping with natural language</p>
           </div>
         </div>
-        {/* Chat conversation */}
-        <div className="bg-gray-900 p-4 rounded-xl mb-4 max-h-[32rem] overflow-y-auto animate-fade-in-up border border-gray-700 shadow-inner" style={{ minHeight: '20rem' }}>
+      </div>
+
+      {/* Main Content */}
+  <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-[72px]">
+        {/* Chat Messages */}
+        <div className="flex-1 p-6 overflow-y-auto">
           {messages.length === 0 && (
-            <p className="text-gray-400">Start by entering a URL and describing your first goal.</p>
+            <div className="text-center py-16 space-y-4">
+              <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Terminal className="w-8 h-8 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Ready to scrape</h3>
+              <p className="text-gray-300 max-w-md mx-auto">
+                Enter a URL and describe what you want to extract to get started
+              </p>
+            </div>
           )}
+          
           {messages.map((msg, idx) => (
-            <div key={idx} className={`mb-4 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={idx} className={`mb-6 flex animate-fade-in ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'user' ? (
-                <div className="px-5 py-3 rounded-2xl bg-blue-600 text-white max-w-[70%] shadow-lg">
-                  <span className="font-semibold">You:</span> {msg.text}
+                <div className="max-w-[75%] bg-slate-800 text-white px-4 py-3 rounded-2xl rounded-br-md shadow-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="text-xs font-medium text-blue-100">You</div>
+                  </div>
+                  <div className="font-medium">{msg.text}</div>
                 </div>
               ) : (
-                <div className="max-w-[80%]">
-                  <div className="px-5 py-3 rounded-2xl bg-gray-700 text-green-300 shadow-lg">
-                    <span className="font-semibold">Bot:</span> {msg.text}
+                <div className="max-w-[85%] space-y-3">
+                  <div className="bg-slate-900 border border-white/10 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="text-xs font-medium text-purple-300">Assistant</div>
+                      {msg.status && getStatusIcon(msg.status)}
+                    </div>
+                    <div className="font-medium">{msg.text}</div>
                   </div>
+
                   {msg.endpoint && (
-                    <div className="mt-2 bg-gray-800 rounded-lg p-3 border border-blue-700 relative">
+                    <div className={`border rounded-2xl p-4 transition-all duration-200 bg-slate-900 border-white/10 relative group shadow-lg`}> 
                       {editIdx === idx ? (
-                        <div className="mb-2 flex flex-col gap-2">
-                          <input
-                            type="text"
-                            className="p-2 rounded bg-gray-700 text-white mb-1"
-                            value={editGoal}
-                            onChange={e => setEditGoal(e.target.value)}
-                            placeholder="Edit goal"
-                          />
-                          <input
-                            type="text"
-                            className="p-2 rounded bg-gray-700 text-white mb-1"
-                            value={editUrl}
-                            onChange={e => setEditUrl(e.target.value)}
-                            placeholder="Edit URL"
-                          />
+                        <div className="space-y-4">
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Goal</label>
+                              <input
+                                type="text"
+                                className="w-full p-3 rounded-lg border border-gray-300 text-gray-900 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                                value={editGoal}
+                                onChange={e => setEditGoal(e.target.value)}
+                                placeholder="Edit goal"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
+                              <input
+                                type="text"
+                                className="w-full p-3 rounded-lg border border-gray-300 text-gray-900 text-sm font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                                value={editUrl}
+                                onChange={e => setEditUrl(e.target.value)}
+                                placeholder="Edit URL"
+                              />
+                            </div>
+                          </div>
                           <div className="flex gap-2">
                             <button
                               onClick={saveEdit}
-                              className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded flex items-center gap-1"
+                              className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500/50"
                               disabled={loading}
                             >
-                              <FaSave /> Save
+                              <Save className="w-4 h-4" />
+                              Save
                             </button>
                             <button
                               onClick={cancelEdit}
-                              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded flex items-center gap-1"
+                              className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/50"
                             >
-                              <FaTimes /> Cancel
+                              <X className="w-4 h-4" />
+                              Cancel
                             </button>
                           </div>
                         </div>
                       ) : (
                         <>
-                          <div className="absolute top-2 right-2 flex gap-2">
+                          <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                             <button
                               onClick={() => startEdit(idx)}
-                              className="text-blue-400 hover:text-blue-600"
+                              className="p-2 bg-white hover:bg-gray-50 rounded-lg text-gray-600 hover:text-blue-600 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm border border-gray-200"
                               title="Edit endpoint"
                             >
-                              <FaEdit size={18} />
+                              <Edit3 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => deleteTask(idx)}
-                              className="text-red-400 hover:text-red-600"
+                              className="p-2 bg-white hover:bg-red-50 rounded-lg text-gray-600 hover:text-red-600 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50 shadow-sm border border-gray-200"
                               title="Delete endpoint"
                               disabled={loading}
                             >
-                              <FaTrash size={18} />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="text-xs text-gray-400 mb-1">Endpoint:</div>
-                          <div className="font-mono text-blue-400 break-all mb-1">{msg.endpoint}</div>
-                          <div className="text-xs text-gray-400 mb-1">Task ID:</div>
-                          <div className="font-mono text-green-400 break-all mb-2">{msg.taskId}</div>
-                          <div className="text-xs text-gray-400 mb-1">Goal:</div>
-                          <div className="text-white mb-1">{msg.goal}</div>
-                          <div className="text-xs text-gray-400 mb-1">URL:</div>
-                          <div className="text-white mb-2">{msg.url || url}</div>
-                          <div className="flex gap-2 items-center">
-                            <button
-                              onClick={() => runTask(idx)}
-                              className={`bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 ${msg.status === 'completed' ? 'opacity-60 cursor-not-allowed' : ''}`}
-                              disabled={loading || msg.status === 'completed'}
-                            >
-                              {loading && msg.status === 'running' ? 'Running...' : (msg.status === 'completed' ? 'Completed' : 'Run Endpoint')}
-                            </button>
-                            {msg.status === 'completed' && (
+                          
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-1">Endpoint</div>
+                                  <div className="font-mono text-sm text-blue-200 bg-slate-800 p-3 rounded-lg border border-blue-800 break-all">
+                                    {msg.endpoint}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-1">Task ID</div>
+                                  <div className="font-mono text-sm text-blue-200 bg-slate-800 p-3 rounded-lg border border-blue-800 break-all">
+                                    {msg.taskId}
+                                  </div>
+                                </div>
+                              </div>
+                            <div>
+                              <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-2">Configuration</div>
+                              <div className="bg-slate-800 p-4 rounded-lg border border-white/10 space-y-3">
+                                <div>
+                                  <span className="text-xs text-blue-300 font-medium">Goal:</span>
+                                  <p className="text-white mt-1">{msg.goal}</p>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-blue-300 font-medium">URL:</span>
+                                  <p className="text-white mt-1 font-mono text-sm break-all">{msg.url || url}</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-3 pt-2">
                               <button
                                 onClick={() => runTask(idx)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg flex items-center gap-1 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                className={`flex-1 flex items-center justify-center gap-3 font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform focus:outline-none focus:ring-2 ${
+                                  msg.status === 'completed'
+                                    ? 'bg-slate-800 border border-green-700 text-green-400 cursor-default'
+                                    : loading && msg.status === 'running'
+                                    ? 'bg-slate-800 border border-blue-700 text-blue-400 cursor-wait'
+                                    : 'bg-green-700 hover:bg-green-800 border border-green-700 text-white hover:scale-105 hover:shadow-lg focus:ring-green-500/50'
+                                }`}
                                 disabled={loading}
-                                title="Rerun Endpoint"
                               >
-                                <FaRedo /> Rerun
+                                {loading && msg.status === 'running' ? (
+                                  <>
+                                    <Loader className="w-5 h-5 animate-spin" />
+                                    Running...
+                                  </>
+                                ) : msg.status === 'completed' ? (
+                                  <>
+                                    <CheckCircle className="w-5 h-5" />
+                                    Completed
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="w-5 h-5" />
+                                    Execute
+                                  </>
+                                )}
                               </button>
-                            )}
+                              {msg.status === 'completed' && (
+                                <button
+                                  onClick={() => runTask(idx)}
+                                  className="px-6 py-3 bg-slate-800 border border-blue-700 text-blue-400 font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                  disabled={loading}
+                                  title="Run again"
+                                >
+                                  <RotateCcw className="w-4 h-4" />
+                                  Rerun
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </>
                       )}
                     </div>
                   )}
+                  
                   {msg.result && (
-                    <div className="mt-2 bg-gray-900 rounded-lg p-4 border border-green-700">
-                      <h2 className="text-white text-lg font-bold mb-2">Result:</h2>
-                      <pre className="text-green-300 overflow-auto max-h-64 text-sm whitespace-pre-wrap">{msg.result}</pre>
+                    <div className="bg-slate-900 border border-green-700 rounded-2xl p-4 shadow-lg">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                        <h3 className="text-lg font-bold text-green-400">Execution Result</h3>
+                      </div>
+                      <div className="bg-slate-800 rounded-lg p-4 border border-green-700">
+                        <pre className="text-green-300 overflow-auto max-h-64 text-sm whitespace-pre-wrap font-mono leading-relaxed">
+                          {msg.result}
+                        </pre>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -321,11 +436,83 @@ export default function ScraperPage() {
           ))}
           <div ref={chatEndRef} />
         </div>
-        {error && (
-          <div className="bg-red-600 p-4 rounded-lg text-white animate-fade-in-down">
-            <p>Error: {error}</p>
+
+        {/* Input Section - Fixed at bottom */}
+  <div className="bg-slate-900 border-t border-white/10 p-6 backdrop-blur-xl">
+          <div className="space-y-4">
+            {/* URL Input */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-white">
+                <Globe className="w-4 h-4 text-blue-400" />
+                Target URL
+              </label>
+              <input
+                type="text"
+                placeholder="https://example.com"
+                className="w-full p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-mono text-sm"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+            </div>
+
+            {/* Goal Input */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-white">
+                <Terminal className="w-4 h-4 text-blue-400" />
+                Extraction Goal
+              </label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Describe what you want to extract..."
+                  className="flex-1 p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && goal.trim() && url.trim() && !loading) {
+                      createTask(goal.trim());
+                      setGoal('');
+                    }
+                  }}
+                  disabled={!url || loading}
+                />
+                <button
+                  onClick={() => { 
+                    if (goal.trim() && url.trim()) {
+                      createTask(goal.trim());
+                      setGoal('');
+                    }
+                  }}
+                  className="px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none flex items-center gap-2 min-w-[100px] justify-center"
+                  disabled={loading || !url || !goal}
+                >
+                  {loading ? (
+                    <Loader className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Send
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Error Display */}
+            {error && (
+              <div className="bg-slate-800 border border-red-700 text-red-300 p-4 rounded-lg animate-fade-in flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                <p className="font-medium flex-1">{error}</p>
+                <button 
+                  onClick={() => setError('')}
+                  className="p-1 hover:bg-red-900 rounded transition-colors duration-200"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
