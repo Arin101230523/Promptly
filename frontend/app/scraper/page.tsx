@@ -13,8 +13,9 @@ import {
   CheckCircle,
   AlertCircle,
   Loader,
-  Send
-} from 'lucide-react';
+  Send,
+  ArrowRightCircle
+  } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Message {
@@ -29,6 +30,7 @@ interface Message {
 }
 
 export default function ScraperPage() {
+  const [showHistory, setShowHistory] = useState(false);
   const [url, setUrl] = useState('');
   const [goal, setGoal] = useState('');
   const [loading, setLoading] = useState(false);
@@ -215,23 +217,36 @@ export default function ScraperPage() {
     }
   };
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'completed':
-        return 'border-green-200 bg-green-50';
-      case 'running':
-        return 'border-blue-200 bg-blue-50';
-      case 'error':
-        return 'border-red-200 bg-red-50';
-      default:
-        return 'border-gray-200 bg-gray-50';
-    }
-  };
-
   return (
-  <div className="min-h-screen bg-slate-900 flex flex-col">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 px-6 py-4 bg-slate-900 backdrop-blur-xl">
+    <div className="min-h-screen bg-slate-900 flex flex-col relative">
+      {/* Chat History Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 ease-in-out ${showHistory ? 'translate-x-0' : '-translate-x-full'} w-64 sm:w-72 bg-slate-950 border-r border-white/10 shadow-xl flex flex-col items-center pt-24 px-6`}
+        onMouseLeave={() => setShowHistory(false)}
+        style={{ pointerEvents: showHistory ? 'auto' : 'none' }}
+      >
+        <div className="flex flex-col items-center gap-4 mt-8">
+          <div className="bg-gradient-to-r from-pink-500 to-yellow-400 rounded-full p-4 animate-bounce">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-xl font-bold text-white">Chat History</h2>
+          <p className="text-sm text-gray-400 text-center">Coming Soon...</p>
+        </div>
+      </div>
+      {/* Hover Area to Show Sidebar */}
+      {!showHistory && (
+        <div
+          className="fixed top-0 left-0 h-full w-8 z-50 flex items-center cursor-pointer group"
+          onMouseEnter={() => setShowHistory(true)}
+          style={{ background: 'transparent' }}
+        >
+          <div className="ml-1 mt-2 opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+            <ArrowRightCircle className="w-6 h-6 text-yellow-400" />
+          </div>
+        </div>
+      )}
+  {/* Header */}
+  <div className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4 bg-slate-900 backdrop-blur-xl">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
             <Zap className="w-6 h-6 text-white cursor-pointer" onClick = {()=>(router.push('/'))} />
@@ -243,12 +258,12 @@ export default function ScraperPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-  <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-[72px]">
+    {/* Main Content */}
+  <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-[72px] px-2 sm:px-0">
         {/* Chat Messages */}
-        <div className="flex-1 p-6 overflow-y-auto">
+  <div className="flex-1 p-2 sm:p-6 overflow-y-auto">
           {messages.length === 0 && (
-            <div className="text-center py-16 space-y-4">
+            <div className="text-center py-10 sm:py-16 space-y-4">
               <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Terminal className="w-8 h-8 text-blue-400" />
               </div>
@@ -262,15 +277,15 @@ export default function ScraperPage() {
           {messages.map((msg, idx) => (
             <div key={idx} className={`mb-6 flex animate-fade-in ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'user' ? (
-                <div className="max-w-[75%] bg-slate-800 text-white px-4 py-3 rounded-2xl rounded-br-md shadow-lg">
+                <div className="max-w-full sm:max-w-[75%] bg-slate-800 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-2xl rounded-br-md shadow-lg text-base sm:text-lg">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-xs font-medium text-blue-100">You</div>
                   </div>
                   <div className="font-medium">{msg.text}</div>
                 </div>
               ) : (
-                <div className="max-w-[85%] space-y-3">
-                  <div className="bg-slate-900 border border-white/10 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
+                <div className="max-w-full sm:max-w-[85%] space-y-3">
+                  <div className="bg-slate-900 border border-white/10 text-white px-3 py-2 sm:px-4 sm:py-3 rounded-2xl rounded-bl-md shadow-lg text-base sm:text-lg">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="text-xs font-medium text-purple-300">Assistant</div>
                       {msg.status && getStatusIcon(msg.status)}
@@ -279,7 +294,7 @@ export default function ScraperPage() {
                   </div>
 
                   {msg.endpoint && (
-                    <div className={`border rounded-2xl p-4 transition-all duration-200 bg-slate-900 border-white/10 relative group shadow-lg`}> 
+                    <div className={`border rounded-2xl p-2 sm:p-4 transition-all duration-200 bg-slate-900 border-white/10 relative group shadow-lg`}> 
                       {editIdx === idx ? (
                         <div className="space-y-4">
                           <div className="space-y-3">
@@ -324,7 +339,7 @@ export default function ScraperPage() {
                         </div>
                       ) : (
                         <>
-                          <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <div className="absolute top-2 right-2 flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 opacity-100 transition-opacity duration-200">
                             <button
                               onClick={() => startEdit(idx)}
                               className="p-2 bg-white hover:bg-gray-50 rounded-lg text-gray-600 hover:text-blue-600 transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm border border-gray-200"
@@ -343,23 +358,23 @@ export default function ScraperPage() {
                           </div>
                           
                           <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                                 <div>
                                   <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-1">Endpoint</div>
-                                  <div className="font-mono text-sm text-blue-200 bg-slate-800 p-3 rounded-lg border border-blue-800 break-all">
+                                  <div className="font-mono text-xs sm:text-sm text-blue-200 bg-slate-800 p-2 sm:p-3 rounded-lg border border-blue-800 break-all">
                                     {msg.endpoint}
                                   </div>
                                 </div>
                                 <div>
                                   <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-1">Task ID</div>
-                                  <div className="font-mono text-sm text-blue-200 bg-slate-800 p-3 rounded-lg border border-blue-800 break-all">
+                                  <div className="font-mono text-xs sm:text-sm text-blue-200 bg-slate-800 p-2 sm:p-3 rounded-lg border border-blue-800 break-all">
                                     {msg.taskId}
                                   </div>
                                 </div>
                               </div>
                             <div>
                               <div className="text-xs font-semibold text-blue-300 uppercase tracking-wide mb-2">Configuration</div>
-                              <div className="bg-slate-800 p-4 rounded-lg border border-white/10 space-y-3">
+                              <div className="bg-slate-800 p-2 sm:p-4 rounded-lg border border-white/10 space-y-3">
                                 <div>
                                   <span className="text-xs text-blue-300 font-medium">Goal:</span>
                                   <p className="text-white mt-1">{msg.goal}</p>
@@ -370,10 +385,10 @@ export default function ScraperPage() {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex gap-3 pt-2">
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
                               <button
                                 onClick={() => runTask(idx)}
-                                className={`flex-1 flex items-center justify-center gap-3 font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform focus:outline-none focus:ring-2 ${
+                                className={`flex-1 flex items-center justify-center gap-2 sm:gap-3 font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-200 transform focus:outline-none focus:ring-2 ${
                                   msg.status === 'completed'
                                     ? 'bg-slate-800 border border-green-700 text-green-400 cursor-default'
                                     : loading && msg.status === 'running'
@@ -385,29 +400,29 @@ export default function ScraperPage() {
                                 {loading && msg.status === 'running' ? (
                                   <>
                                     <Loader className="w-5 h-5 animate-spin" />
-                                    Running...
+                                    <span className="hidden sm:inline">Running...</span>
                                   </>
                                 ) : msg.status === 'completed' ? (
                                   <>
                                     <CheckCircle className="w-5 h-5" />
-                                    Completed
+                                    <span className="hidden sm:inline">Completed</span>
                                   </>
                                 ) : (
                                   <>
                                     <Play className="w-5 h-5" />
-                                    Execute
+                                    <span className="hidden sm:inline">Execute</span>
                                   </>
                                 )}
                               </button>
                               {msg.status === 'completed' && (
                                 <button
                                   onClick={() => runTask(idx)}
-                                  className="px-6 py-3 bg-slate-800 border border-blue-700 text-blue-400 font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-slate-800 border border-blue-700 text-blue-400 font-semibold rounded-lg flex items-center justify-center sm:justify-start gap-2 transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                                   disabled={loading}
                                   title="Run again"
                                 >
                                   <RotateCcw className="w-4 h-4" />
-                                  Rerun
+                                  <span className="hidden sm:inline">Rerun</span>
                                 </button>
                               )}
                             </div>
@@ -418,12 +433,12 @@ export default function ScraperPage() {
                   )}
                   
                   {msg.result && (
-                    <div className="bg-slate-900 border border-green-700 rounded-2xl p-4 shadow-lg">
+                    <div className="bg-slate-900 border border-green-700 rounded-2xl p-2 sm:p-4 shadow-lg">
                       <div className="flex items-center gap-2 mb-3">
                         <CheckCircle className="w-5 h-5 text-green-400" />
                         <h3 className="text-lg font-bold text-green-400">Execution Result</h3>
                       </div>
-                      <div className="bg-slate-800 rounded-lg p-4 border border-green-700">
+                      <div className="bg-slate-800 rounded-lg p-2 sm:p-4 border border-green-700">
                         <pre className="text-green-300 overflow-auto max-h-64 text-sm whitespace-pre-wrap font-mono leading-relaxed">
                           {msg.result}
                         </pre>
@@ -438,7 +453,7 @@ export default function ScraperPage() {
         </div>
 
         {/* Input Section - Fixed at bottom */}
-  <div className="bg-slate-900 border-t border-white/10 p-6 backdrop-blur-xl">
+  <div className="bg-slate-900 border-t border-white/10 p-4 sm:p-6 backdrop-blur-xl">
           <div className="space-y-4">
             {/* URL Input */}
             <div className="space-y-2">
@@ -449,7 +464,7 @@ export default function ScraperPage() {
               <input
                 type="text"
                 placeholder="https://example.com"
-                className="w-full p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-mono text-sm"
+                className="w-full p-2 sm:p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 font-mono text-xs sm:text-sm"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
               />
@@ -461,11 +476,11 @@ export default function ScraperPage() {
                 <Terminal className="w-4 h-4 text-blue-400" />
                 Extraction Goal
               </label>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <input
                   type="text"
                   placeholder="Describe what you want to extract..."
-                  className="flex-1 p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                  className="flex-1 p-2 sm:p-3 rounded-lg border border-white/10 bg-slate-800 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 text-xs sm:text-sm"
                   value={goal}
                   onChange={(e) => setGoal(e.target.value)}
                   onKeyDown={(e) => {
@@ -483,7 +498,7 @@ export default function ScraperPage() {
                       setGoal('');
                     }
                   }}
-                  className="px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none flex items-center gap-2 min-w-[100px] justify-center"
+                  className="flex-1 px-4 sm:px-6 py-2 sm:py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none flex items-center gap-2 min-w-[80px] sm:min-w-[100px] justify-center"
                   disabled={loading || !url || !goal}
                 >
                   {loading ? (
@@ -491,7 +506,7 @@ export default function ScraperPage() {
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      Send
+                      <span className="hidden sm:inline">Send</span>
                     </>
                   )}
                 </button>

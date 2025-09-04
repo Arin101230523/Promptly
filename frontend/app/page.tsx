@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Globe, Zap, Brain, ChevronDown, Users, TrendingUp, Database, Target, BarChart } from 'lucide-react';
+import { ArrowRight, Globe, Zap, Brain, ChevronDown, Users, TrendingUp, Database, Target, BarChart, Menu, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 function Home() {
   const [mounted, setMounted] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const router = useRouter();
   
@@ -82,7 +83,7 @@ function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden relative">
+  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden relative">
       {/* Animated Background Elements */}
       <motion.div
         className="fixed inset-0 pointer-events-none"
@@ -100,13 +101,14 @@ function Home() {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-900/50 border-b border-white/10"
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
+            className="text-2xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
           >
             Promptly
           </motion.div>
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
             <a href="#stats" className="text-gray-300 hover:text-white transition-colors">Stats</a>
@@ -114,9 +116,48 @@ function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+              onClick={() => router.push('/scraper')}
             >
               Get Started
             </motion.button>
+          </div>
+          {/* Mobile hamburger */}
+          <div className="md:hidden flex items-center relative">
+            <button
+              aria-label="Open menu"
+              className="focus:outline-none"
+              onClick={() => setNavOpen(!navOpen)}
+            >
+              {navOpen ? (
+                <X className="w-7 h-7 text-white" />
+              ) : (
+                <Menu className="w-7 h-7 text-white" />
+              )}
+            </button>
+            {/* Mobile menu dropdown */}
+            {navOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="absolute top-full right-0 mt-2 w-48 bg-slate-900/95 rounded-xl shadow-lg border border-white/10 flex flex-col z-50"
+              >
+                <a
+                  href="#features"
+                  className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-t-xl transition-colors text-base font-semibold"
+                  onClick={() => { setNavOpen(false); }}
+                >Features</a>
+                <a
+                  href="#stats"
+                  className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
+                  onClick={() => setNavOpen(false)}
+                >Stats</a>
+                <button
+                  className="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
+                  onClick={() => router.push('/scraper')}
+                >Get Started</button>
+              </motion.div>
+            )}
           </div>
         </div>
       </motion.nav>
@@ -124,7 +165,7 @@ function Home() {
       {/* Hero Section */}
       <motion.section 
         style={{ y: heroY }}
-        className="relative flex flex-col items-center justify-center min-h-screen pt-20 px-6"
+        className="relative flex flex-col items-center justify-center min-h-screen pt-24 px-4 sm:px-6"
       >
         <motion.div
           variants={containerVariants}
@@ -144,7 +185,7 @@ function Home() {
           {/* Main Heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-6xl md:text-8xl font-black leading-none mb-8"
+            className="text-4xl sm:text-6xl md:text-8xl font-black leading-none mb-8"
           >
             <span className="block">AI-Powered</span>
             <span className="block bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient">
@@ -155,7 +196,7 @@ function Home() {
           {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto"
+            className="text-base sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 leading-relaxed max-w-3xl mx-auto"
           >
             Transform any website into a structured API with intelligent AI processing. 
             <span className="text-blue-400 font-semibold"> No coding required.</span>
@@ -164,15 +205,15 @@ function Home() {
           {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full"
           >
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all"
+              className="group relative px-6 sm:px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all w-full sm:w-auto"
               onClick={() => router.push('/scraper')}
             >
-              <span className="flex items-center space-x-2">
+              <span className="flex items-center space-x-2 justify-center">
                 <span>Start Scraping Free</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -182,7 +223,7 @@ function Home() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-lg backdrop-blur-sm hover:bg-white/10 transition-all"
+              className="px-6 sm:px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-base sm:text-lg backdrop-blur-sm hover:bg-white/10 transition-all w-full sm:w-auto"
             >
               Watch Demo
             </motion.button>
@@ -193,7 +234,7 @@ function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2, duration: 1 }}
-            className="absolute bottom-[30px] left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-[25px] left-1/2 transform -translate-x-1/2"
           >
             <motion.div
               animate={{ y: [0, 10, 0] }}
@@ -229,7 +270,7 @@ function Home() {
       <motion.section
         id="stats"
         style={{ y: featuresY }}
-        className="py-20 px-6 relative"
+        className="py-16 sm:py-20 px-4 sm:px-6 relative"
       >
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -237,7 +278,7 @@ function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-2xl mx-auto"
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -271,7 +312,7 @@ function Home() {
       </motion.section>
 
       {/* Use Cases Section */}
-      <motion.section className="py-24 px-6 relative">
+  <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -291,7 +332,7 @@ function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {useCases.map((useCase, index) => {
               // Assign gradient and icon bg based on color
               let cardGradient = "from-blue-900/60 to-blue-700/40";
@@ -330,7 +371,7 @@ function Home() {
       </motion.section>
 
       {/* Detailed Features Section */}
-      <motion.section className="py-24 px-6 relative">
+  <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -359,7 +400,7 @@ function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 title: "Smart Rate Limiting",
@@ -453,7 +494,7 @@ function Home() {
       {/* Features Section */}
       <motion.section
         id="features"
-        className="py-24 px-6 relative"
+        className="py-16 sm:py-24 px-4 sm:px-6 relative"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -483,7 +524,7 @@ function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -538,7 +579,7 @@ function Home() {
       </motion.section>
 
       {/* How It Works Section */}
-      <motion.section className="py-24 px-6 relative">
+  <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -558,7 +599,7 @@ function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {[
               { step: "01", title: "Enter URL", desc: "Simply paste the website URL you want to scrape", color: "from-blue-400 to-cyan-500" },
               { step: "02", title: "Define Goals", desc: "Tell our AI what data you need in plain English", color: "from-purple-400 to-pink-500" },
@@ -598,7 +639,7 @@ function Home() {
       </motion.section>
 
       {/* FAQ Section */}
-      <motion.section className="py-24 px-6 relative">
+  <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -615,7 +656,7 @@ function Home() {
             </h2>
           </motion.div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
           {[
             {
               question: "How accurate is the AI-powered extraction?",
@@ -657,7 +698,7 @@ function Home() {
       </motion.section>
 
       {/* CTA Section */}
-      <motion.section className="py-24 px-6 relative">
+      <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -673,7 +714,7 @@ function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-black mb-6"
+              className="text-2xl sm:text-4xl md:text-5xl font-black mb-6"
             >
               Ready to{' '}
               <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
@@ -687,7 +728,7 @@ function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto"
+              className="text-base sm:text-xl text-gray-300 mb-8 sm:mb-10 max-w-2xl mx-auto"
             >
               Join thousands of developers who trust Promptly for their data extraction needs
             </motion.p>
@@ -702,9 +743,9 @@ function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-10 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-lg shadow-xl hover:shadow-purple-500/30 transition-all"
+                className="px-6 sm:px-10 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-purple-500/30 transition-all w-full sm:w-auto"
               >
-                Start Free Trial
+                Get Started for Free Today!
               </motion.button>
               <span className="text-gray-400 text-sm">No credit card required</span>
             </motion.div>
@@ -713,9 +754,9 @@ function Home() {
       </motion.section>
 
       {/* Footer */}
-      <footer className="py-16 px-6 border-t border-white/10 bg-black/20 backdrop-blur-xl">
+  <footer className="py-12 sm:py-16 px-4 sm:px-6 border-t border-white/10 bg-black/20 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -762,10 +803,10 @@ function Home() {
         transition={{ delay: 3 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/25 z-40"
+        className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/25 z-40"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
-        <ChevronDown className="w-6 h-6 text-white rotate-180" />
+        <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-white rotate-180" />
       </motion.button>
 
     </div>
