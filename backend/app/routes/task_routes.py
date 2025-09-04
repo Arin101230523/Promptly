@@ -40,7 +40,7 @@ def create_task(task: TaskCreate):
             "url": task.url,
             "goal": task.goal,
             "status": "created",
-            "timestamp": datetime.utcnow().isoformat()
+            "created": datetime.utcnow().isoformat()
         }
         tasks_collection.insert_one(doc)
         return {"task_id": task_id, "endpoint": f"/run-task/{task_id}"}
@@ -94,7 +94,7 @@ def run_task(task_id: str):
 
             tasks_collection.update_one(
                 {"_id": task_id},
-                {"$set": {"status": "completed", "result": result}}
+                {"$set": {"status": "completed", "result": result, "last_ran": datetime.utcnow().isoformat()}}
             )
             return result
 
@@ -103,7 +103,7 @@ def run_task(task_id: str):
                 "error": f"Task execution failed: {str(e)}",
                 "metadata": {
                     "task_id": task_id,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "created": datetime.utcnow().isoformat()
                 }
             }
             tasks_collection.update_one(
