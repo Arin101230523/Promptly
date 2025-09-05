@@ -7,6 +7,7 @@ from app.services.agent_utils import (
     extract_first_json,
     clamp_confidence,
 )
+import random
 
 def smart_url_scoring(url: str, link_context: dict, goal: str) -> tuple:
     """Enhanced URL scoring using both URL structure and link context."""
@@ -207,6 +208,17 @@ def clamp_confidence(conf):
         return max(0, min(10, conf))
     except Exception:
         return 0
+    
+def get_random_user_agent():
+    """Return a random user-agent string from a list of common browsers."""
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+    ]
+    return random.choice(user_agents)
 
 def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
     """Intelligent site exploration with early stopping and smart page selection."""

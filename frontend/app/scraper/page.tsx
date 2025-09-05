@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import ChatHistorySidebar from '../../components/ChatHistorySidebar';
 import Header from '../../components/Header';
 import HoverSidebar from '../../components/HoverSidebar';

@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 
 from app.services.agent_service import smart_explore_site
 from app.clients.mongo_client import tasks_collection 
+from app.services.agent_service import get_random_user_agent
 
 router = APIRouter()
 
@@ -81,10 +82,8 @@ def run_task(task_id: str):
         chrome_options.add_argument("--disable-images")
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_argument("--log-level=3")
-        chrome_options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-        )
-        
+        chrome_options.add_argument(f"user-agent={get_random_user_agent()}")
+
         driver = None
         try:
             driver = webdriver.Chrome(options=chrome_options)
