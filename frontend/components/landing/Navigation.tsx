@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Navigation = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -24,9 +25,9 @@ const Navigation = () => {
         </motion.div>
         {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="/#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-          <a href="/#faq" className="text-gray-300 hover:text-white transition-colors">FAQs</a>
-          <a href="/docs" className="text-gray-300 hover:text-white transition-colors">Docs</a>
+          <Link href="/#features" className="text-gray-300 hover:text-white transition-colors">Features</Link>
+          <Link href="/#faq" className="text-gray-300 hover:text-white transition-colors">FAQs</Link>
+          <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">Docs</Link>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -57,21 +58,21 @@ const Navigation = () => {
               exit={{ opacity: 0, y: -20 }}
               className="absolute top-full right-0 mt-2 w-56 bg-slate-900/95 rounded-xl shadow-lg border border-white/10 flex flex-col z-50"
             >
-              <a
+              <Link
                 href="/#features"
                 className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-t-xl transition-colors text-base font-semibold"
                 onClick={() => { setNavOpen(false); }}
-              >Features</a>
-              <a
+              >Features</Link>
+              <Link
                 href="/#faq"
                 className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
                 onClick={() => setNavOpen(false)}
-              >FAQs</a>
-              <a
+              >FAQs</Link>
+              <Link
                 href="/docs"
                 className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
                 onClick={() => setNavOpen(false)}
-              >Docs</a>
+              >Docs</Link>
               <button
                 className="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
                 onClick={() => { setNavOpen(false); router.push('/scraper'); }}
