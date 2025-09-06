@@ -25,7 +25,7 @@ const Navigation = () => {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-8">
           <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-          <a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQ</a>
+          <a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQs</a>
           <a href="/docs" className="text-gray-300 hover:text-white transition-colors">Docs</a>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -71,7 +71,7 @@ const Navigation = () => {
                   href="#faq"
                   className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
                   onClick={() => setNavOpen(false)}
-                >FAQ</a>
+                >FAQs</a>
               <button
                 className="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
                 onClick={() => { setNavOpen(false); router.push('/scraper'); }}

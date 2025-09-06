@@ -3,6 +3,9 @@ import re
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException, WebDriverException
+from arcadepy import Arcade
+from app.clients.groq_client import client as llm_client
+import os
 
 def fetch_page_html(driver, url: str, timeout=10) -> str:
     """Fetch page using Selenium with timeout."""
@@ -99,3 +102,75 @@ def clamp_confidence(conf):
         return max(0, min(10, conf))
     except Exception:
         return 0
+
+# Helper functions for agentic email
+
+def should_send_email_and_extract_address(goal, result):
+    """
+    Use LLM to decide if an email should be sent and extract the email address from the goal/prompt.
+    Returns: dict {"send_email": bool, "email_address": str or None, "reasoning": str}
+    """
+    prompt = f"""
+    Decide if the result should be sent via email to the user, and extract the email address if present.
+    Goal: {goal}
+    Result: {str(result)[:1000]}
+
+    Instructions:
+    - Only set send_email to true if the user explicitly requests or implies they want the result emailed, and you know the email address to send to.
+    - Extract the email address from the goal if present. If not present, set email_address to null.
+    - If send_email is false, set email_address to null.
+
+    Respond with JSON:
+    {{
+        "send_email": true/false,
+        "email_address": "user@email.com" or null,
+        "reasoning": "short explanation"
+    }}
+    """
+    try:
+        response = llm_client.chat.completions.create(
+            model="gemma2-9b-it",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+        )
+        content = response.choices[0].message.content.strip()
+        decision = extract_first_json(content)
+        return {
+            "send_email": decision.get("send_email", False),
+            "email_address": decision.get("email_address", None),
+            "reasoning": decision.get("reasoning", "")
+        }
+    except Exception as e:
+        print(f"[should_send_email_and_extract_address] LLM decision failed: {e}")
+        return {"send_email": False, "email_address": None, "reasoning": str(e)}
+
+def send_email_via_arcade(email_address, result):
+    try:
+        API_KEY = os.getenv("ARCADE_API_KEY")
+        USER_ID = os.getenv("USER_ID")
+        client = Arcade(api_key=API_KEY)
+        auth_response = client.tools.authorize(
+            tool_name="Gmail.SendEmail@3.0.0",
+            user_id=USER_ID,
+        )
+        if auth_response.status != "completed":
+            print(f"Click this link to authorize: {auth_response.url}")
+            auth_response = client.auth.wait_for_completion(auth_response)
+        if auth_response.status != "completed":
+            print("Authorization failed for Arcade Gmail tool.")
+        else:
+            email_result = client.tools.execute(
+                tool_name="Gmail.SendEmail@3.0.0",
+                input={
+                    "recipient": email_address,
+                    "subject": "Promptly Agent Response",
+                    "body": str(result),
+                    "owner": "ArcadeAI",
+                    "name": "arcade-ai",
+                    "starred": "true",
+                },
+                user_id=USER_ID,
+            )
+            print(email_result)
+    except Exception as e:
+        print(f"[send_email_via_arcade] Email sending failed: {e}")

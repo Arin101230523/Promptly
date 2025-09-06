@@ -8,6 +8,7 @@ from app.services.agent_utils import (
     clamp_confidence,
 )
 import random
+from app.services.agent_utils import should_send_email_and_extract_address, send_email_via_arcade
 
 def smart_url_scoring(url: str, link_context: dict, goal: str) -> tuple:
     """Enhanced URL scoring using both URL structure and link context."""
@@ -263,7 +264,7 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
         print("\n✅ Landing page contains high-confidence answer!")
         print("\nPHASE 4: Result Compilation")
         print("-" * 40)
-        return {
+        result = {
             "data": landing_extraction['data'],
             "metadata": {
                 "start_url": start_url,
@@ -276,6 +277,23 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
+        # Agentic email logic
+        email_decision = should_send_email_and_extract_address(goal, result)
+        if email_decision["send_email"] and email_decision["email_address"]:
+            print(f"\n📧 Sending result to {email_decision['email_address']} (reason: {email_decision['reasoning']})")
+            try:
+                # Wrap JSON in <pre> tags for email formatting
+                import json
+                email_body = f"<pre>\n{json.dumps(result, indent=2)}\n</pre>"
+                send_email_via_arcade(email_decision["email_address"], email_body)
+                result["email_sent"] = True
+                result["email_message"] = f"Email sent to {email_decision['email_address']}"
+            except Exception as e:
+                result["email_sent"] = False
+                result["email_message"] = f"Failed to send email: {str(e)}"
+        else:
+            result["email_sent"] = False
+        return result
 
     # Phase 2: Smart exploration of high-priority pages
     print("\nPHASE 2: Smart Link Prioritization")
@@ -387,7 +405,7 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
     # Return best result that satisfies the goal and has confidence >= 7
     if best_result and best_result.get('confidence', 0) >= 7:
         print(f"✓ Returning best result with confidence {best_result['confidence']}/10")
-        return {
+        result = {
             "data": best_result['data'],
             "metadata": {
                 "start_url": start_url,
@@ -400,11 +418,27 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
+        # Agentic email logic
+        email_decision = should_send_email_and_extract_address(goal, result)
+        if email_decision["send_email"] and email_decision["email_address"]:
+            print(f"\n📧 Sending result to {email_decision['email_address']} (reason: {email_decision['reasoning']})")
+            try:
+                import json
+                email_body = f"<pre>\n{json.dumps(result, indent=2)}\n</pre>"
+                send_email_via_arcade(email_decision["email_address"], email_body)
+                result["email_sent"] = True
+                result["email_message"] = f"Email sent to {email_decision['email_address']}"
+            except Exception as e:
+                result["email_sent"] = False
+                result["email_message"] = f"Failed to send email: {str(e)}"
+        else:
+            result["email_sent"] = False
+        return result
 
     # If no result with confidence >= 7, try to return the best that satisfies the goal
     if best_result and best_result.get('confidence', 0) > 0 and best_result.get('data'):
         print(f"✓ Returning best available result with confidence {best_result['confidence']}/10")
-        return {
+        result = {
             "data": best_result['data'],
             "metadata": {
                 "start_url": start_url,
@@ -417,9 +451,24 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
+        # Agentic email logic
+        email_decision = should_send_email_and_extract_address(goal, result)
+        if email_decision["send_email"] and email_decision["email_address"]:
+            print(f"\n📧 Sending result to {email_decision['email_address']} (reason: {email_decision['reasoning']})")
+            try:
+                email_body = f"<pre>\n{json.dumps(result, indent=2)}\n</pre>"
+                send_email_via_arcade(email_decision["email_address"], email_body)
+                result["email_sent"] = True
+                result["email_message"] = f"Email sent to {email_decision['email_address']}"
+            except Exception as e:
+                result["email_sent"] = False
+                result["email_message"] = f"Failed to send email: {str(e)}"
+        else:
+            result["email_sent"] = False
+        return result
 
     print("❌ Could not find satisfactory answer")
-    return {
+    result = {
         "error": "Could not find information to satisfy the goal",
         "metadata": {
             "start_url": start_url,
@@ -429,3 +478,17 @@ def smart_explore_site(driver, start_url: str, goal: str, max_pages=20):
             "timestamp": datetime.utcnow().isoformat()
         }
     }
+    # Agentic email logic
+    email_decision = should_send_email_and_extract_address(goal, result)
+    if email_decision["send_email"] and email_decision["email_address"]:
+        print(f"\n📧 Sending result to {email_decision['email_address']} (reason: {email_decision['reasoning']})")
+        try:
+            send_email_via_arcade(email_decision["email_address"], result)
+            result["email_sent"] = True
+            result["email_message"] = f"Email sent to {email_decision['email_address']}"
+        except Exception as e:
+            result["email_sent"] = False
+            result["email_message"] = f"Failed to send email: {str(e)}"
+    else:
+        result["email_sent"] = False
+    return result
