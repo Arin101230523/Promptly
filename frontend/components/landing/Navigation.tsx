@@ -24,8 +24,8 @@ const Navigation = () => {
         </motion.div>
         {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-          <a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQs</a>
+          <a href="/#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
+          <a href="/#faq" className="text-gray-300 hover:text-white transition-colors">FAQs</a>
           <a href="/docs" className="text-gray-300 hover:text-white transition-colors">Docs</a>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -40,7 +40,7 @@ const Navigation = () => {
         <div className="md:hidden flex items-center relative">
           <button
             aria-label="Open menu"
-            className="focus:outline-none"
+            className="focus:outline-none cursor-pointer"
             onClick={() => setNavOpen(!navOpen)}
           >
             {navOpen ? (
@@ -58,20 +58,20 @@ const Navigation = () => {
               className="absolute top-full right-0 mt-2 w-56 bg-slate-900/95 rounded-xl shadow-lg border border-white/10 flex flex-col z-50"
             >
               <a
-                href="#features"
+                href="/#features"
                 className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 rounded-t-xl transition-colors text-base font-semibold"
                 onClick={() => { setNavOpen(false); }}
               >Features</a>
+              <a
+                href="/#faq"
+                className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
+                onClick={() => setNavOpen(false)}
+              >FAQs</a>
               <a
                 href="/docs"
                 className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
                 onClick={() => setNavOpen(false)}
               >Docs</a>
-                <a
-                  href="#faq"
-                  className="px-6 py-3 text-gray-300 hover:text-white hover:bg-blue-500/10 transition-colors text-base font-semibold"
-                  onClick={() => setNavOpen(false)}
-                >FAQs</a>
               <button
                 className="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
                 onClick={() => { setNavOpen(false); router.push('/scraper'); }}

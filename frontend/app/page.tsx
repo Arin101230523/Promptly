@@ -26,6 +26,19 @@ function Home() {
 
   useEffect(() => {
     setMounted(true);
+    // Scroll to anchor if hash is present
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash) {
+        // Wait for DOM to be ready
+        setTimeout(() => {
+          const el = document.getElementById(hash.replace('#', ''));
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    }
   }, []);
 
   const features = [

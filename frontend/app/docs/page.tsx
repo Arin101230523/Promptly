@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Book, Code, Zap, Settings, Users, Copy, CheckCircle, ExternalLink, Search, Menu, X } from 'lucide-react';
+import { Book, Code, Zap, Settings, Users, Copy, CheckCircle, ExternalLink, Search, X } from 'lucide-react';
 
 import Navigation from '../../components/landing/Navigation';
 import Footer from '../../components/landing/Footer';
@@ -16,19 +16,19 @@ const CodeBlock: React.FC<{ children: string; language?: string }> = ({ children
   };
 
   return (
-    <div className="relative bg-gray-900/50 rounded-lg border border-white/10">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
-        <span className="text-sm text-gray-400">{language}</span>
+    <div className="relative bg-gray-900/50 rounded-lg border border-white/10 text-xs sm:text-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-2 sm:px-4 py-2 border-b border-white/10 gap-2 sm:gap-0">
+        <span className="text-xs sm:text-sm text-gray-400">{language}</span>
         <button
           onClick={copyToClipboard}
-          className="flex items-center space-x-1 text-sm text-gray-400 hover:text-white transition-colors"
+          className="flex items-center space-x-1 text-xs sm:text-sm text-gray-400 hover:text-white transition-colors"
         >
-          {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {copied ? <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
           <span>{copied ? 'Copied!' : 'Copy'}</span>
         </button>
       </div>
-      <pre className="p-4 overflow-x-auto">
-        <code className="text-sm text-gray-300">{children}</code>
+      <pre className="p-2 sm:p-4 overflow-x-auto">
+        <code className="text-xs sm:text-sm text-gray-300">{children}</code>
       </pre>
     </div>
   );
@@ -612,30 +612,22 @@ app.listen(3000, () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900 text-white">
       <Navigation />
-      
-      <div className="flex-1 flex mt-16">
-        {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
-          <div className="flex items-center justify-between p-6 border-b border-white/10 lg:hidden">
-            <h2 className="text-xl font-bold text-white">Documentation</h2>
-            <button onClick={() => setSidebarOpen(false)}>
-              <X className="w-6 h-6 text-gray-400" />
-            </button>
-          </div>
-          
-          <div className="p-6">
-            <div className="relative mb-6">
+
+  <div className="flex-1 flex flex-col lg:flex-row pt-16">
+        {/* Sidebar for desktop */}
+        <div className="hidden lg:block lg:static lg:inset-0 w-64 bg-black/20 backdrop-blur-xl border-r border-white/10">
+          <div className="p-4 sm:p-6">
+            <div className="relative mb-4 sm:mb-6">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search docs..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs sm:text-sm"
               />
             </div>
-
-            <nav className="space-y-2">
+            <nav className="space-y-1 sm:space-y-2">
               {filteredSections.length === 0 ? (
                 <div className="text-gray-400 px-3 py-2">No matching docs found.</div>
               ) : (
@@ -648,13 +640,13 @@ app.listen(3000, () => {
                         setActiveSection(section.id);
                         setSidebarOpen(false);
                       }}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                      className={`w-full flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2 rounded-lg text-left transition-colors text-xs sm:text-base ${
                         activeSection === section.id
                           ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                           : 'text-gray-300 hover:text-white hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>{section.title}</span>
                     </button>
                   );
@@ -664,24 +656,74 @@ app.listen(3000, () => {
           </div>
         </div>
 
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div className="fixed top-16 left-0 right-0 z-50 w-full h-[calc(100vh-4rem)] bg-black/20 backdrop-blur-xl border-r border-white/10 lg:hidden">
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <h2 className="text-lg font-bold text-white">Documentation</h2>
+              <button onClick={() => setSidebarOpen(false)}>
+                <X className="w-5 h-5 text-gray-400 cursor-pointer" />
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search docs..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs"
+                />
+              </div>
+              <nav className="space-y-1">
+                {filteredSections.length === 0 ? (
+                  <div className="text-gray-400 px-3 py-2">No matching docs found.</div>
+                ) : (
+                  filteredSections.map((section) => {
+                    const Icon = section.icon;
+                    return (
+                      <button
+                        key={section.id}
+                        onClick={() => {
+                          setActiveSection(section.id);
+                          setSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center space-x-2 px-2 py-2 rounded-lg text-left transition-colors text-xs ${
+                          activeSection === section.id
+                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                            : 'text-gray-300 hover:text-white hover:bg-white/5'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{section.title}</span>
+                      </button>
+                    );
+                  })
+                )}
+              </nav>
+            </div>
+          </div>
+        )}
+
         {/* Main Content */}
         <div className="flex-1 lg:ml-0">
-          <div className="lg:hidden p-4 border-b border-white/10">
+          <div className="lg:hidden p-2 sm:p-4 border-b border-white/10">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="flex items-center space-x-2 text-gray-300 hover:text-white"
+              className="flex items-center space-x-2 text-gray-300 hover:text-white text-base cursor-pointer"
             >
-              <Menu className="w-6 h-6" />
-              <span>Menu</span>
+              <Search className="w-5 h-5 sm:w-6 sm:h-6" />
+              <span>Search</span>
             </button>
           </div>
-          
-          <main className="max-w-4xl mx-auto py-8 px-6">
+
+          <main className="max-w-full sm:max-w-4xl mx-auto py-4 sm:py-8 px-2 sm:px-6">
             {renderContent()}
           </main>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
