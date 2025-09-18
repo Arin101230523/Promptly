@@ -4,10 +4,12 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from arcadepy import Arcade
-from app.clients.groq_client import client as llm_client
+from promptly.clients.groq_client import client as llm_client
 import os
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
-def fetch_page_html(driver, url: str, timeout=10) -> str:
+def fetch_page_html(driver, url: str, timeout=30) -> str:
     """Fetch page using Selenium with timeout."""
     try:
         driver.set_page_load_timeout(timeout)
@@ -150,7 +152,7 @@ def send_email_via_arcade(email_address, result):
         USER_ID = os.getenv("USER_ID")
         client = Arcade(api_key=API_KEY)
         auth_response = client.tools.authorize(
-            tool_name="Gmail.SendEmail@3.0.0",
+            tool_name="Gmail.SendEmail@3.1.0",
             user_id=USER_ID,
         )
         if auth_response.status != "completed":
@@ -160,7 +162,7 @@ def send_email_via_arcade(email_address, result):
             print("Authorization failed for Arcade Gmail tool.")
         else:
             email_result = client.tools.execute(
-                tool_name="Gmail.SendEmail@3.0.0",
+                tool_name="Gmail.SendEmail@3.1.0",
                 input={
                     "recipient": email_address,
                     "subject": "Promptly Agent Response",
@@ -174,3 +176,39 @@ def send_email_via_arcade(email_address, result):
             print(email_result)
     except Exception as e:
         print(f"[send_email_via_arcade] Email sending failed: {e}")
+
+def group_similar_links(links_with_context, similarity_threshold=0.5, embedding_model_name='all-MiniLM-L6-v2'):
+    """
+    Groups links by semantic similarity of their anchor and context text.
+    Args:
+        links_with_context: dict of {url: {anchor_text, parent_context, ...}}
+        similarity_threshold: float, minimum cosine similarity to group links
+        embedding_model_name: str, sentence-transformers model name
+    Returns:
+        List of groups, each group is a list of URLs (similar links)
+    """
+    if not links_with_context:
+        return []
+    model = SentenceTransformer(embedding_model_name)
+    texts = [
+        (url, (ctx.get('anchor_text', '') + ' ' + ctx.get('parent_context', '')))
+        for url, ctx in links_with_context.items()
+    ]
+    url_list = [url for url, _ in texts]
+    text_list = [text for _, text in texts]
+    embeddings = model.encode(text_list, show_progress_bar=False)
+    sim_matrix = cosine_similarity(embeddings)
+    n = len(url_list)
+    visited = set()
+    groups = []
+    for i in range(n):
+        if i in visited:
+            continue
+        group = [url_list[i]]
+        visited.add(i)
+        for j in range(i+1, n):
+            if j not in visited and sim_matrix[i][j] >= similarity_threshold:
+                group.append(url_list[j])
+                visited.add(j)
+        groups.append(group)
+    return groups

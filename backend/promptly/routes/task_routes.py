@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import uuid
+import random
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from app.services.agent_service import smart_explore_site
-from app.clients.mongo_client import tasks_collection 
-from app.services.agent_service import get_random_user_agent
+from promptly.services.agent_service import smart_explore_site
+from promptly.clients.mongo_client import tasks_collection 
+from promptly.services.agent_service import get_random_user_agent
 
 router = APIRouter()
 
@@ -74,15 +75,47 @@ def run_task(task_id: str):
 
         # Setup Chrome driver
         chrome_options = Options()
+        
+        # Basic headless options
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
+        
+        # Anti-detection measures
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options.add_argument("--disable-web-security")
+        chrome_options.add_argument("--allow-running-insecure-content")
+        chrome_options.add_argument("--disable-features=VizDisplayCompositor")
         chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_argument("--disable-plugins")
         chrome_options.add_argument("--disable-images")
+        chrome_options.add_argument("--disable-javascript")  # Only if site works without JS
+        
+        # Performance optimizations
+        chrome_options.add_argument("--memory-pressure-off")
+        chrome_options.add_argument("--disable-background-timer-throttling")
+        chrome_options.add_argument("--disable-renderer-backgrounding")
+        chrome_options.add_argument("--disable-backgrounding-occluded-windows")
+        chrome_options.add_argument("--enable-unsafe-swiftshader")
+        chrome_options.add_argument("--disable-software-rasterizer")
+        
+        # Logging reduction
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_argument("--log-level=3")
+        chrome_options.add_argument("--silent")
+        
+        # Random user agent
         chrome_options.add_argument(f"user-agent={get_random_user_agent()}")
+        
+        # Window size randomization
+        width = random.randint(1024, 1920)
+        height = random.randint(768, 1080)
+        chrome_options.add_argument(f"--window-size={width},{height}")
+        
+        # Additional stealth options
+        chrome_options.add_experimental_option("useAutomationExtension", False)
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 
         driver = None
         try:

@@ -15,9 +15,10 @@ setup(
         "beautifulsoup4",
         "selenium",
         "python-dotenv",
-        "pymongo[srv]"
+        "pymongo[srv]",
+        "arcadepy"
     ],
-    long_description=open("README.md", encoding="utf-8").read() if __import__('os').path.exists("README.md") else "",
+    long_description=(open("README.md", encoding="utf-8").read() if __import__('os').path.exists("README.md") else ""),
     long_description_content_type="text/markdown",
     license="MIT",
     classifiers=[
@@ -27,4 +28,9 @@ setup(
     ],
     python_requires=">=3.8",
     include_package_data=True,
+    entry_points={
+        "console_scripts": [
+            "promptly-server=promptly.main:main", 
+        ],
+    },
 )

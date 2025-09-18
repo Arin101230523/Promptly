@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-WORKDIR /app
-COPY . /app
+WORKDIR /promptly
+COPY . /promptly
 
 # installing google-chrome-stable via curl
 RUN apt-get update && apt-get install -y curl && \

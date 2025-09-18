@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
-from app.routes.task_routes import router as task_router
+from promptly.routes.task_routes import router as task_router
 
 load_dotenv()
 
