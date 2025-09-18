@@ -90,7 +90,6 @@ def run_task(task_id: str):
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-plugins")
         chrome_options.add_argument("--disable-images")
-        chrome_options.add_argument("--disable-javascript")  # Only if site works without JS
         
         # Performance optimizations
         chrome_options.add_argument("--memory-pressure-off")

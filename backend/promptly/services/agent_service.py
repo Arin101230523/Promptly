@@ -554,7 +554,7 @@ class BatchWebExplorer(Agent):
             return False
         
         # Stop if we have a very high confidence result
-        if best_result.satisfies_goal and best_result.confidence >= 9.5:
+        if best_result.satisfies_goal and best_result.confidence >= 9.0:
             return True
         
         return False
