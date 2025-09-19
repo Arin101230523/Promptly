@@ -322,17 +322,21 @@ class BatchWebExplorer(Agent):
         try:
             # Phase 1: Analyze first page
             first_result = self._analyze_first_page(context, driver)
-            
+            # Early exit if first page is high-confidence and satisfies goal
+            if first_result.confidence >= 9.0 and first_result.satisfies_goal:
+                print(f"✅ Early exit: first page has high-confidence ({first_result.confidence}) and satisfies goal. Skipping further exploration (Phases 2 and 3).")
+                return self._build_final_result(first_result, context, ExplorationStrategy.FIRST_PAGE_SUFFICIENT)
+
             # Phase 2: Score all available links
             scored_links = self._score_all_links(context)
-            
+
             # Phase 3: Explore in batches until satisfied or exhausted
             best_result = self._explore_in_batches(context, driver, scored_links, first_result)
 
             # Phase 4: Return best result
             strategy = self._determine_strategy(context)
             return self._build_final_result(best_result or first_result, context, strategy)
-            
+
         except Exception as e:
             self.log(f"Exploration failed: {e}")
             return self._build_error_result(context, str(e))
@@ -365,7 +369,7 @@ class BatchWebExplorer(Agent):
         print(f"  - Data type: {first_result.data_type}")
         print(f"  - Reasoning: {first_result.reasoning}")
         
-        if first_result.satisfies_goal and first_result.confidence >= 8:
+        if first_result.satisfies_goal and first_result.confidence >= 8 and first_result.confidence < 9.0:
             print("✅ first page claims to have high-confidence answer, but we'll explore more to verify!")
         else:
             print("📋 first page doesn't fully satisfy goal - exploration needed")

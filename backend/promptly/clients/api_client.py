@@ -1,56 +1,59 @@
+import os
 import requests
 
-class PromptlyClient:
-    def __init__(self, base_url: str):
-        self.base_url = base_url.rstrip('/')
+from dotenv import load_dotenv
 
-    def create_task(self, url: str, goal: str):
-        """
-        Create a new crawling task.
-        Returns: dict with task_id and endpoint
-        """
-        payload = {'url': url, 'goal': goal}
-        response = requests.post(f"{self.base_url}/create-task/", json=payload)
+load_dotenv()
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+
+def create_task(url: str, goal: str):
+    endpoint = f"{BACKEND_URL}/create-task/"
+    payload = {"url": url, "goal": goal}
+    try:
+        response = requests.post(endpoint, json=payload)
         response.raise_for_status()
         return response.json()
+    except Exception as e:
+        return {"error": str(e)}
 
-    def run_task(self, task_id: str):
-        """
-        Execute a crawling task.
-        Returns: dict with result
-        """
-        response = requests.get(f"{self.base_url}/run-task/{task_id}")
+def run_task(task_id: str):
+    endpoint = f"{BACKEND_URL}/run-task/{task_id}"
+    try:
+        response = requests.get(endpoint)
         response.raise_for_status()
         return response.json()
+    except Exception as e:
+        return {"error": str(e)}
 
-    def get_task_status(self, task_id: str):
-        """
-        Get the status of a task.
-        Returns: dict with status and result
-        """
-        response = requests.get(f"{self.base_url}/task-status/{task_id}")
+def get_task_status(task_id: str):
+    endpoint = f"{BACKEND_URL}/task-status/{task_id}"
+    try:
+        response = requests.get(endpoint)
         response.raise_for_status()
         return response.json()
+    except Exception as e:
+        return {"error": str(e)}
 
-    def update_task(self, task_id: str, url: str = None, goal: str = None):
-        """
-        Update url or goal for a task. If completed, set status to 'modified'.
-        Returns: dict with update message
-        """
-        payload = {}
-        if url is not None:
-            payload['url'] = url
-        if goal is not None:
-            payload['goal'] = goal
-        response = requests.patch(f"{self.base_url}/update-task/{task_id}", json=payload)
+def update_task(task_id: str, url: str = None, goal: str = None):
+    endpoint = f"{BACKEND_URL}/update-task/{task_id}"
+    payload = {}
+    if url is not None:
+        payload["url"] = url
+    if goal is not None:
+        payload["goal"] = goal
+    headers = {"Content-Type": "application/json"}
+    try:
+        response = requests.patch(endpoint, json=payload, headers=headers)
         response.raise_for_status()
         return response.json()
+    except Exception as e:
+        return {"error": str(e)}
 
-    def delete_task(self, task_id: str):
-        """
-        Delete a task.
-        Returns: dict with delete message
-        """
-        response = requests.delete(f"{self.base_url}/delete-task/{task_id}")
+def delete_task(task_id: str):
+    endpoint = f"{BACKEND_URL}/delete-task/{task_id}"
+    try:
+        response = requests.delete(endpoint)
         response.raise_for_status()
         return response.json()
+    except Exception as e:
+        return {"error": str(e)}

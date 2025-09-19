@@ -3,8 +3,10 @@ from setuptools import setup, find_packages
 setup(
     name="promptly",
     version="0.1.0",
-    description="Promptly: Smart web crawling and data extraction",
+    description="Promptly: Agentic web scraper and data extractor made easy",
     author="Arin Sood",
+    author_email="your@email.com",
+    url="https://github.com/Arin101230523/Promptly",
     packages=find_packages(),
     install_requires=[
         "fastapi==0.111.0",
@@ -16,9 +18,12 @@ setup(
         "selenium",
         "python-dotenv",
         "pymongo[srv]",
-        "arcadepy"
+        "arcadepy",
+        "sentence-transformers",
+        "scikit-learn",
+        "pytest",
     ],
-    long_description=(open("README.md", encoding="utf-8").read() if __import__('os').path.exists("README.md") else ""),
+    long_description=open("README.md", encoding="utf-8").read() if __import__('os').path.exists("README.md") else "",
     long_description_content_type="text/markdown",
     license="MIT",
     classifiers=[
@@ -28,9 +33,10 @@ setup(
     ],
     python_requires=">=3.8",
     include_package_data=True,
+    keywords=["web scraping", "agents", "data extraction", "fastapi", "promptly"],
     entry_points={
         "console_scripts": [
-            "promptly-server=promptly.main:main", 
+            "promptly-server=promptly.main:main",
         ],
     },
 )

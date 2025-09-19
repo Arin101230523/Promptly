@@ -1,0 +1,30 @@
+Metadata-Version: 2.4
+Name: promptly
+Version: 0.1.0
+Summary: Promptly: Agentic web scraper and data extractor made easy
+Home-page: https://github.com/Arin101230523/Promptly
+Author: Arin Sood
+Author-email: Arin Sood <your@email.com>
+License: MIT
+Keywords: web scraping,agents,data extraction,fastapi,promptly
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi==0.111.0
+Requires-Dist: requests==2.32.3
+Requires-Dist: uvicorn==0.30.1
+Requires-Dist: groq==0.30.0
+Requires-Dist: pydantic-settings==2.3.0
+Requires-Dist: beautifulsoup4
+Requires-Dist: selenium
+Requires-Dist: python-dotenv
+Requires-Dist: pymongo[srv]
+Requires-Dist: arcadepy
+Requires-Dist: sentence-transformers
+Requires-Dist: scikit-learn
+Requires-Dist: pytest
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python
