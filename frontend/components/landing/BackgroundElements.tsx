@@ -66,7 +66,8 @@ function CountryBorders() {
           // Each poly: array of rings
           return poly.map((ring: any, k: number) => {
             const points = ring.map((pt: [number, number]) => project(pt));
-            const color = d3color(schemeCategory10[i % schemeCategory10.length]).formatHex();
+            const d3c = d3color(schemeCategory10[i % schemeCategory10.length]);
+            const color = d3c ? d3c.formatHex() : schemeCategory10[i % schemeCategory10.length];
             return (
               <line key={`${i}-${j}-${k}`}> 
                 <bufferGeometry>
