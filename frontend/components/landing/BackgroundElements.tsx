@@ -173,7 +173,10 @@ const BackgroundElements: React.FC<BackgroundElementsProps> = ({ backgroundY }) 
   return (
     <motion.div
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: globeOpacity }}
+      style={{ opacity: globeOpacity, willChange: "opacity" }}
+      transition={{
+        opacity: { type: "tween", duration: 0.4, ease: "linear" }
+      }}
     >
       <Canvas 
         camera={{ position: [0, 0, 8], fov: 60 }}
@@ -182,9 +185,7 @@ const BackgroundElements: React.FC<BackgroundElementsProps> = ({ backgroundY }) 
       >
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={.7} color={"#ff80b5"} />
-
         <InternetGlobe />
-
         <OrbitControls enableZoom={false} enablePan={false} />
       </Canvas>
     </motion.div>
