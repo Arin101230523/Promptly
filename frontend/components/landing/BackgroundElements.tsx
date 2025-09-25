@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useRef, useMemo, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -164,7 +163,7 @@ const BackgroundElements: React.FC<BackgroundElementsProps> = ({ backgroundY }) 
   return (
     <motion.div
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ y: backgroundY, opacity: globeOpacity }}
+      style={{ opacity: globeOpacity }}
     >
       <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
         <ambientLight intensity={0.5} />

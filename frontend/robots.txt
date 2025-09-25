@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /contact/
+Disallow: /privacy/
+Disallow: /terms/
+Disallow: /scraper/
+Disallow: /docs/

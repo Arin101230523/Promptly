@@ -6,7 +6,7 @@ const CTASection = () => {
   const router = useRouter();
 
   return (
-    <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
+    <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative z-10">
       <div className="max-w-4xl mx-auto text-center">
         <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -15,7 +15,7 @@ const CTASection = () => {
         transition={{ duration: 0.8 }}
         className="relative p-12 bg-gradient-to-br from-pink-500/10 to-orange-600/10 backdrop-blur-xl rounded-3xl border border-white/10"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-orange-600/5 rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-orange-600/5 rounded-3xl pointer-events-none" />
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

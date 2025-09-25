@@ -18,8 +18,9 @@ const ProgressBarAndScrollButton = ({ scrollYProgress }: { scrollYProgress: Moti
       transition={{ delay: 3 }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-pink-500 to-orange-600 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/25 z-40"
+      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-pink-500 to-orange-600 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/25 z-40 cursor-pointer"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label='Scroll to top'
     >
       <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-white rotate-180" />
     </motion.button>

@@ -4,9 +4,11 @@ import { Mail, MessageCircle, MapPin, Clock, Send, Headphones, Zap } from 'lucid
 
 import Navigation from '../../components/landing/Navigation';
 import Footer from '../../components/landing/Footer';
+import ContactFormEmailJS from './ContactFormEmailJS';
 
 
-const Contact = () => (
+const Contact = () => {
+  return (
   <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-950 via-purple-900 to-blue-900 text-white">
     <Navigation />
     <div className="flex-1 flex flex-col justify-center items-center">
@@ -118,56 +120,8 @@ const Contact = () => (
           </div>
         </div>
 
-        {/* Quick Contact Form */}
-  <div className="border-l-4 border-pink-500 pl-3 sm:pl-6 mb-8 sm:mb-12">
-          <div className="flex items-center mb-3 sm:mb-6">
-            <Send className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-pink-400" />
-            <h2 className="text-xl sm:text-3xl font-bold text-pink-300">Quick Contact Form</h2>
-          </div>
-          <div className="bg-white/5 rounded-lg p-4 sm:p-6">
-            <p className="text-gray-300 mb-3 sm:mb-6 text-sm sm:text-base">Need immediate assistance? Fill out this form and we&#39;ll get back to you as soon as possible.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 mb-2 sm:mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                <input 
-                  type="text" 
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                <input 
-                  type="email" 
-                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="your@email.com"
-                />
-              </div>
-            </div>
-            <div className="mb-2 sm:mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-              <select className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="">Select a category</option>
-                <option value="technical">Technical Support</option>
-                {/* Removed Billing Question option as Promptly does not require billing */}
-                <option value="feature">Feature Request</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div className="mb-3 sm:mb-6">
-              <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
-              <textarea 
-                rows={4}
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Tell us how we can help you..."
-              ></textarea>
-            </div>
-            <button className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-pink-500 to-orange-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all flex items-center text-sm sm:text-base">
-              <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-              Send Message
-            </button>
-          </div>
-        </div>
+        {/* Quick Contact Form with EmailJS */}
+        <ContactFormEmailJS />
 
         <div className="mt-8 sm:mt-16 flex justify-center">
           <div className="px-4 sm:px-8 py-2 sm:py-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-600 text-white font-bold shadow-lg text-center text-sm sm:text-base">
@@ -179,6 +133,7 @@ const Contact = () => (
     </div>
     <Footer />
   </div>
-);
+  );
+}
 
 export default Contact;
