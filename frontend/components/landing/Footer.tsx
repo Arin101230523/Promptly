@@ -14,7 +14,7 @@ const Footer = () => {
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-6 md:mb-0 cursor-pointer"
+          className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent mb-6 md:mb-0 cursor-pointer"
           onClick ={() => router.push('/')}
         >
           Promptly

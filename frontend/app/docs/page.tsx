@@ -59,7 +59,7 @@ const Docs = () => {
         return (
           <div className="space-y-8">
             <div>
-              <h2 className="text-4xl font-bold text-blue-300 mb-4">Getting Started</h2>
+              <h2 className="text-4xl font-bold text-orange-300 mb-4">Getting Started (Work In Progress)</h2>
               <p className="text-xl text-gray-300 mb-6">Welcome to Promptly! This guide will help you get up and running in minutes.</p>
             </div>
 
@@ -629,7 +629,7 @@ app.listen(3000, () => {
             </div>
             <nav className="space-y-1 sm:space-y-2">
               {filteredSections.length === 0 ? (
-                <div className="text-gray-400 px-3 py-2">No matching docs found.</div>
+                <div className="text-orange-400 px-3 py-2">No matching docs found.</div>
               ) : (
                 filteredSections.map((section) => {
                   const Icon = section.icon;
@@ -642,8 +642,8 @@ app.listen(3000, () => {
                       }}
                       className={`w-full flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 py-2 rounded-lg text-left transition-colors text-xs sm:text-base ${
                         activeSection === section.id
-                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                          : 'text-gray-300 hover:text-white hover:bg-white/5'
+                          ? 'bg-blue-500/20 text-orange-300 border border-orange-500/30'
+                          : 'text-gray-300 hover:text-orange-300 hover:bg-white/5'
                       }`}
                     >
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5" />

@@ -38,7 +38,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ features }) => (
         </motion.div>
         <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
           Why Choose{' '}
-          <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent">
             Promptly?
           </span>
         </h2>

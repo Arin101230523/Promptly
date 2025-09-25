@@ -13,9 +13,9 @@ const CTASection = () => {
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="relative p-12 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-xl rounded-3xl border border-white/10"
+        className="relative p-12 bg-gradient-to-br from-pink-500/10 to-orange-600/10 backdrop-blur-xl rounded-3xl border border-white/10"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-600/5 rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-orange-600/5 rounded-3xl" />
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ const CTASection = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 sm:px-10 py-4 bg-gradient-to-r cursor-pointer from-blue-500 to-purple-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-purple-500/30 transition-all w-full sm:w-auto"
+            className="px-6 sm:px-10 py-4 bg-gradient-to-r cursor-pointer from-pink-500 to-orange-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:shadow-orange-500/30 transition-all w-full sm:w-auto"
             onClick = {() => router.push('/scraper')}
           >
             Get Started for Free Today!

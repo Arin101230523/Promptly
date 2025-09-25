@@ -13,11 +13,11 @@ const Terms = () => (
       <main className="w-full max-w-5xl py-10 px-3 sm:py-24 sm:px-8 rounded-xl shadow-2xl bg-white/5 backdrop-blur-lg mt-6 mb-6 sm:mt-12 sm:mb-12">
   <div className="text-center mb-8 sm:mb-12">
           <Scale className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 text-blue-400" />
-          <h1 className="text-3xl sm:text-5xl font-extrabold mb-2 sm:mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-lg">
+          <h1 className="text-3xl sm:text-5xl font-extrabold mb-2 sm:mb-4 bg-gradient-to-r from-pink-500 to-orange-600 bg-clip-text text-transparent drop-shadow-lg">
             Terms of Service
           </h1>
           <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto">
-            By using <span className="font-bold text-blue-300">Promptly</span>, you agree to these terms and conditions. Please read them carefully to understand your rights and responsibilities.
+            By using <span className="font-bold text-orange-300">Promptly</span>, you agree to these terms and conditions. Please read them carefully to understand your rights and responsibilities.
           </p>
           <div className="mt-2 sm:mt-4 text-xs sm:text-sm text-gray-400">
             Last updated: September 2025
@@ -179,7 +179,7 @@ const Terms = () => (
         </div>
 
         <div className="mt-8 sm:mt-16 flex justify-center">
-          <div className="px-4 sm:px-8 py-2 sm:py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg text-center text-sm sm:text-base">
+          <div className="px-4 sm:px-8 py-2 sm:py-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-600 text-white font-bold shadow-lg text-center text-sm sm:text-base">
             <Gavel className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
             Use Promptly responsibly and enjoy!
           </div>

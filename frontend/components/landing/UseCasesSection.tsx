@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 interface UseCase {
   color: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
   desc: string;
 }
@@ -20,7 +20,7 @@ const UseCasesSection: React.FC<{ useCases: UseCase[] }> = ({ useCases }) => (
       >
         <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
           Endless{' '}
-          <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-pink-400 via-orange-400 to-green-400 bg-clip-text text-transparent">
             Possibilities
           </span>
         </h2>

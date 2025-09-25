@@ -12,8 +12,8 @@ const Contact = () => (
     <div className="flex-1 flex flex-col justify-center items-center">
       <main className="w-full max-w-5xl py-10 px-3 sm:py-24 sm:px-8 rounded-xl shadow-2xl bg-white/5 backdrop-blur-lg mt-6 mb-6 sm:mt-12 sm:mb-12">
   <div className="text-center mb-8 sm:mb-12">
-          <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 text-blue-400" />
-          <h1 className="text-3xl sm:text-5xl font-extrabold mb-2 sm:mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent drop-shadow-lg">
+          <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 text-orange-400" />
+          <h1 className="text-3xl sm:text-5xl font-extrabold mb-2 sm:mb-4 bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
             Contact Us
           </h1>
             <p className="text-base sm:text-xl text-gray-300 max-w-3xl mx-auto">
@@ -162,7 +162,7 @@ const Contact = () => (
                 placeholder="Tell us how we can help you..."
               ></textarea>
             </div>
-            <button className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all flex items-center text-sm sm:text-base">
+            <button className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-pink-500 to-orange-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all flex items-center text-sm sm:text-base">
               <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
               Send Message
             </button>
@@ -170,7 +170,7 @@ const Contact = () => (
         </div>
 
         <div className="mt-8 sm:mt-16 flex justify-center">
-          <div className="px-4 sm:px-8 py-2 sm:py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg text-center text-sm sm:text-base">
+          <div className="px-4 sm:px-8 py-2 sm:py-4 rounded-full bg-gradient-to-r from-pink-500 to-orange-600 text-white font-bold shadow-lg text-center text-sm sm:text-base">
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
             Let&#39;s connect and build something amazing together!
           </div>

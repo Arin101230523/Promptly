@@ -18,7 +18,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <motion.div
           whileHover={{ scale: 1.05 }}
-          className="text-2xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent cursor-pointer"
+          className="text-2xl sm:text-2xl font-bold bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent cursor-pointer"
           onClick={() => router.push('/')}
         >
           Promptly
@@ -31,7 +31,7 @@ const Navigation = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+            className="px-6 py-2 bg-gradient-to-r from-pink-500 to-orange-600 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all"
             onClick={() => router.push('/scraper')}
           >
             Playground

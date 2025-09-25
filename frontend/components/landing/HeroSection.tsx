@@ -50,7 +50,7 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
           className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-8"
         >
           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-sm font-medium">Live & Ready to Scale</span>
+          <span className="text-sm font-medium">No Account Required</span>
         </motion.div>
         {/* Main Heading */}
         <motion.h1
@@ -58,7 +58,7 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
           className="text-4xl sm:text-6xl md:text-8xl font-black leading-none mb-5"
         >
           <span className="block">AI-Powered</span>
-          <span className="block bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text leading-tight text-transparent animate-gradient">
+          <span className="block bg-gradient-to-r from-pink-400 via-orange-500 to-pink-500 bg-clip-text leading-tight text-transparent animate-gradient">
             Web Scraper
           </span>
         </motion.h1>
@@ -67,8 +67,8 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
           variants={itemVariants}
           className="text-base sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 leading-relaxed max-w-3xl mx-auto"
         >
-          Transform any website into a structured API with intelligent AI processing. 
-          <span className="text-blue-400 font-semibold"> No coding required.</span>
+          Transform any website into a structured API with <strong>Promptly</strong>.
+          <span className="text-orange-400 font-semibold"><br /> No coding required.</span>
         </motion.p>
         {/* CTA Buttons */}
         <motion.div
@@ -78,21 +78,22 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
           <motion.button
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="group relative px-6 sm:px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all w-full sm:w-auto"
+            className="group relative px-6 sm:px-8 py-4 bg-gradient-to-r from-pink-500 to-orange-600 rounded-2xl font-bold text-base sm:text-lg shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all w-full sm:w-auto"
             onClick={() => router.push('/scraper')}
           >
             <span className="flex items-center space-x-2 justify-center">
               <span>Start Scraping For Free</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 sm:px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-base sm:text-lg backdrop-blur-sm hover:bg-white/10 transition-all w-full sm:w-auto"
+            className="px-6 sm:px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-base sm:text-lg backdrop-blur-sm hover:bg-white/10 transition-all w-full sm:w-auto cursor-pointer"
+            onClick={() => router.push('/docs')}
           >
-            Watch Demo
+            See our Docs
           </motion.button>
         </motion.div>
         {/* Scroll Indicator */}
@@ -112,16 +113,16 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
           </motion.div>
         </motion.div>
       </motion.div>
-      {/* Floating Elements */}
+      {/* Floating Elements (hidden on mobile) */}
       <motion.div
         animate={{ rotate: [0, 360], scale: [1, 1.1, 1] }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-1/4 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/30 to-purple-500/30 rounded-2xl backdrop-blur-sm border border-white/10"
+        className="hidden sm:absolute sm:top-1/4 sm:left-10 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-400/30 to-purple-500/30 rounded-2xl backdrop-blur-sm border border-white/10"
       />
       <motion.div
         animate={{ rotate: [360, 0], y: [0, -20, 0] }}
         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/3 right-16 w-16 h-16 bg-gradient-to-br from-pink-400/30 to-orange-500/30 rounded-full backdrop-blur-sm border border-white/10"
+        className="hidden sm:absolute sm:top-1/3 sm:right-16 sm:w-16 sm:h-16 bg-gradient-to-br from-pink-400/30 to-orange-500/30 rounded-full backdrop-blur-sm border border-white/10"
       />
     </motion.section>
   );

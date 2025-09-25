@@ -8,6 +8,7 @@ import StatsSection from '../components/landing/StatsSection';
 import UseCasesSection from '../components/landing/UseCasesSection';
 import DetailedFeaturesSection from '../components/landing/DetailedFeaturesSection';
 import FeaturesSection from '../components/landing/FeaturesSection';
+import { UserCheck } from 'lucide-react';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
 import FAQSection from '../components/landing/FAQSection';
 import CTASection from '../components/landing/CTASection';
@@ -43,23 +44,23 @@ function Home() {
 
   const features = [
     {
-      title: "Effortless Data Extraction",
-      description: "No more manual scraping. Define your goal, and let AI handle the complexity of extracting exactly what you need.",
-      icon: Globe,
+      title: "No-Code, Goal-Based Scraping",
+      description: "Just describe what you want—no technical setup, no templates. Promptly interprets your goal and handles the rest.",
+      icon: Brain,
       gradient: "from-blue-400 to-cyan-500",
       delay: 0.1,
     },
     {
-      title: "AI-Powered Insights", 
-      description: "Beyond raw data, our system uses advanced AI to process and structure results according to your specific requirements.",
-      icon: Brain,
+      title: "Batch Exploration & Smart Link Scoring",
+      description: "Promptly explores multiple pages in batches, scoring links groups based on cosine-similarity for relevance to your goal and prioritizing the best paths automatically.",
+      icon: ShieldCheck,
       gradient: "from-purple-400 to-pink-500",
       delay: 0.2,
     },
     {
-      title: "API on Demand",
-      description: "Receive a unique API endpoint for each task, allowing seamless integration into your applications.",
-      icon: Zap,
+      title: "Instant API Integration",
+      description: "Every extraction task creates a ready-to-use API endpoint for seamless integration into your workflow or app.",
+      icon: UserCheck,
       gradient: "from-orange-400 to-red-500",
       delay: 0.3,
     },
@@ -75,9 +76,9 @@ function Home() {
   ];
 
   const stats = [
-    { value: "99.9%", label: "Uptime", icon: TrendingUp },
+    { value: "Fast", label: "Real-Time Extraction", icon: Zap },
     { value: "256-bit SSL", label: "Encrypted Connection", icon: Lock },
-    { value: "GDPR", label: "Privacy Compliance", icon: ShieldCheck },
+    { value: "API-first", label: "Easy Integration", icon: Zap },
     { value: "Open Source", label: "Transparent Codebase", icon: Github },
   ];
 

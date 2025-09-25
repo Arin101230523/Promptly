@@ -38,7 +38,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ stats, featuresY }) => (
           >
             <div className="relative mb-4">
               <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10 group-hover:border-white/30 transition-all">
-                <stat.icon className="w-8 h-8 text-blue-400 group-hover:text-purple-400 transition-colors" />
+                {React.createElement(stat.icon, { className: "w-8 h-8 text-pink-400 group-hover:text-orange-400 transition-colors" })}
               </div>
             </div>
             <motion.div
@@ -46,7 +46,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ stats, featuresY }) => (
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: index * 0.1 + 0.3, type: "spring" }}
-              className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2"
+              className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent mb-2"
             >
               {stat.value}
             </motion.div>

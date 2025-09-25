@@ -5,7 +5,7 @@ const HowItWorksSection = () => {
   const steps = [
     { step: "01", title: "Enter URL", desc: "Simply paste the website URL you want to scrape", color: "from-blue-400 to-cyan-500" },
     { step: "02", title: "Define Goals", desc: "Tell our AI what data you need in plain English", color: "from-purple-400 to-pink-500" },
-    { step: "03", title: "Get API", desc: "Receive your custom API endpoint instantly", color: "from-green-400 to-emerald-500" },
+    { step: "03", title: "Get API", desc: "Receive your custom API endpoint instantly and run it anytime, anywhere", color: "from-green-400 to-emerald-500" },
   ];
   return (
     <motion.section className="py-16 sm:py-24 px-4 sm:px-6 relative">
@@ -19,7 +19,7 @@ const HowItWorksSection = () => {
         >
           <h2 className="text-5xl md:text-6xl font-black mb-6">
             How It{' '}
-            <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-pink-400 to-orange-500 bg-clip-text text-transparent">
               Works
             </span>
           </h2>

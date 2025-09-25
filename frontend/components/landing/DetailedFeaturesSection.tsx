@@ -1,44 +1,44 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Bot, UserCheck, Zap, ShieldCheck, FileText, Eye } from 'lucide-react';
 
 const DetailedFeaturesSection = () => {
   const features = [
     {
-      title: "AI-Powered Page Analysis",
-      description: "Leverages advanced AI models to intelligently identify and extract relevant data from complex web pages.",
-      icon: "🤖",
-      gradient: "from-blue-400 to-cyan-500",
+      title: "Strategic Site Navigation",
+      description: "Start from any page and our agent intelligently navigates links using semantic analysis, cosine similarity, and ML to find the most relevant information.",
+      icon: <Bot className="w-8 h-8" />,
+      gradient: "from-pink-400 to-cyan-500",
+    },
+    {
+      title: "Agentic Email Delivery",
+      description: "If specified, results can be sent directly to your email using secure agent workflows.",
+      icon: <ShieldCheck className="w-8 h-8" />,
+      gradient: "from-indigo-400 to-pink-500",
     },
     {
       title: "Automatic Anti-Bot Evasion",
       description: "Uses stealth browser techniques and rotating user agents to minimize detection and maximize successful scraping.",
-      icon: "🕵️‍♂️",
+      icon: <Eye className="w-8 h-8" />,
       gradient: "from-green-400 to-emerald-500",
     },
     {
       title: "Instant API Generation",
       description: "Every extraction task instantly creates a unique API endpoint for seamless integration with your apps.",
-      icon: "⚡",
-      gradient: "from-purple-400 to-violet-500",
+      icon: <Zap className="w-8 h-8" />,
+      gradient: "from-orange-400 to-violet-500",
     },
     {
-      title: "Data Validation",
-      description: "Automatic quality checks and data validation to ensure accuracy and consistency in your extracted information.",
-      icon: "✅",
-      gradient: "from-purple-400 to-violet-500",
-    },
-    {
-      title: "Multi-format Export",
-      description: "Export your data in JSON, CSV, XML, or any custom format that fits your workflow and integration needs.",
-      icon: "📁",
+      title: "Custom Extraction Logic",
+      description: "Define your own extraction rules or let the model adapt to complex site structures for tailored results.",
+      icon: <UserCheck className="w-8 h-8" />,
+      gradient: "from-orange-400 to-violet-500",
+        },
+        {
+      title: "Flexible Output Format",
+      description: "Specify any output format you need—our models will automatically convert and structure your data accordingly.",
+      icon: <FileText className="w-8 h-8" />,
       gradient: "from-pink-400 to-rose-500",
-    },
-    {
-      title: "Enterprise Security",
-      description: "Bank-level encryption, secure API keys, and compliance with data protection regulations for peace of mind.",
-      icon: "🔒",
-      gradient: "from-indigo-400 to-blue-500",
     },
   ];
   return (
@@ -62,7 +62,7 @@ const DetailedFeaturesSection = () => {
           </motion.div>
           <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
             Everything You{' '}
-            <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-green-400 to-pink-500 bg-clip-text text-transparent">
               Need
             </span>
           </h2>
@@ -106,7 +106,7 @@ const DetailedFeaturesSection = () => {
                 <motion.div
                   initial={{ opacity: 0, x: -10 }}
                   whileHover={{ opacity: 1, x: 0 }}
-                  className="absolute bottom-6 right-6 text-purple-400"
+                  className="absolute bottom-6 right-6 text-orange-400"
                 >
                   <ArrowRight className="w-5 h-5" />
                 </motion.div>
