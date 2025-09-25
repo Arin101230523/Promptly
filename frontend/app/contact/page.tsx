@@ -1,4 +1,4 @@
-import { Mail, MessageCircle, MapPin, Clock, Send, Headphones, Zap } from 'lucide-react';
+import { MessageCircle, MapPin, Headphones, Zap } from 'lucide-react';
 
 import Navigation from '../../components/landing/Navigation';
 import Footer from '../../components/landing/Footer';

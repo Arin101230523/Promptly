@@ -14,6 +14,38 @@ interface BackgroundElementsProps {
   backgroundY: any;
 }
 
+// Generate static connection data outside component to prevent re-generation
+const generateStaticConnections = () => {
+  const positions: number[] = [];
+  const N = 30; 
+  const seededRandom = (seed: number) => {
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  };
+  
+  for (let i = 0; i < N; i++) {
+    const phi1 = seededRandom(i * 4) * Math.PI * 2;
+    const theta1 = Math.acos(2 * seededRandom(i * 4 + 1) - 1);
+    const phi2 = seededRandom(i * 4 + 2) * Math.PI * 2;
+    const theta2 = Math.acos(2 * seededRandom(i * 4 + 3) - 1);
+
+    const r = 2;
+    const x1 = r * Math.sin(theta1) * Math.cos(phi1);
+    const y1 = r * Math.sin(theta1) * Math.sin(phi1);
+    const z1 = r * Math.cos(theta1);
+
+    const x2 = r * Math.sin(theta2) * Math.cos(phi2);
+    const y2 = r * Math.sin(theta2) * Math.sin(phi2);
+    const z2 = r * Math.cos(theta2);
+
+    positions.push(x1, y1, z1, x2, y2, z2);
+  }
+  return new Float32Array(positions);
+};
+
+// Generate once outside component
+const STATIC_CONNECTIONS = generateStaticConnections();
+
 // Wireframe globe
 function Globe() {
   return (
@@ -85,33 +117,11 @@ function CountryBorders() {
   );
 }
 
-// Random arcs between globe points
+// Static connections using pre-generated data
 function Connections() {
   const linesRef = useRef<THREE.LineSegments>(null);
 
-  // Generate random start/end points on the sphere surface
-  const lines = useMemo(() => {
-    const positions: number[] = [];
-    const N = 30; 
-    for (let i = 0; i < N; i++) {
-      const phi1 = Math.random() * Math.PI * 2;
-      const theta1 = Math.acos(2 * Math.random() - 1);
-      const phi2 = Math.random() * Math.PI * 2;
-      const theta2 = Math.acos(2 * Math.random() - 1);
-
-      const r = 2;
-      const x1 = r * Math.sin(theta1) * Math.cos(phi1);
-      const y1 = r * Math.sin(theta1) * Math.sin(phi1);
-      const z1 = r * Math.cos(theta1);
-
-      const x2 = r * Math.sin(theta2) * Math.cos(phi2);
-      const y2 = r * Math.sin(theta2) * Math.sin(phi2);
-      const z2 = r * Math.cos(theta2);
-
-      positions.push(x1, y1, z1, x2, y2, z2);
-    }
-    return new Float32Array(positions);
-  }, []);
+  const lines = useMemo(() => STATIC_CONNECTIONS, []);
 
   // Animate line opacity flickering
   useFrame(({ clock }) => {
@@ -165,7 +175,11 @@ const BackgroundElements: React.FC<BackgroundElementsProps> = ({ backgroundY }) 
       className="fixed inset-0 pointer-events-none z-0"
       style={{ opacity: globeOpacity }}
     >
-      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+      <Canvas 
+        camera={{ position: [0, 0, 8], fov: 60 }}
+        performance={{ min: 0.5 }}
+        dpr={[1, 2]}
+      >
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={.7} color={"#ff80b5"} />
 

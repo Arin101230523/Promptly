@@ -75,7 +75,7 @@ const Navigation = () => {
                 onClick={() => setNavOpen(false)}
               >Docs</Link>
               <button
-                className="px-6 py-3 text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
+                className="px-6 py-3 text-white bg-gradient-to-r from-pink-500 to-orange-600 rounded-b-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-base"
                 onClick={() => { setNavOpen(false); router.push('/scraper'); }}
               >Playground</button>
             </motion.div>
