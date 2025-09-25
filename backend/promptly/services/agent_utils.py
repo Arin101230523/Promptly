@@ -152,7 +152,7 @@ def send_email_via_arcade(email_address, result):
         USER_ID = os.getenv("USER_ID")
         client = Arcade(api_key=API_KEY)
         auth_response = client.tools.authorize(
-            tool_name="Gmail.SendEmail@3.1.0",
+            tool_name="Gmail.SendEmail@3.2.0",
             user_id=USER_ID,
         )
         if auth_response.status != "completed":
@@ -162,7 +162,7 @@ def send_email_via_arcade(email_address, result):
             print("Authorization failed for Arcade Gmail tool.")
         else:
             email_result = client.tools.execute(
-                tool_name="Gmail.SendEmail@3.1.0",
+                tool_name="Gmail.SendEmail@3.2.0",
                 input={
                     "recipient": email_address,
                     "subject": "Promptly Agent Response",
