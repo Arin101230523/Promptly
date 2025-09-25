@@ -5,8 +5,6 @@ from typing import Dict, List, Any, Optional, Tuple
 from enum import Enum
 import json
 import random
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import threading
 
 from promptly.clients.groq_client import client
 from promptly.services.agent_utils import (
@@ -67,21 +65,18 @@ class ExplorationContext:
     current_best: Optional[ExplorationResult] = None
     all_results: list = field(default_factory=list)
     links: Dict[str, Any] = field(default_factory=dict)
-    _lock: threading.Lock = field(default_factory=threading.Lock)
     
     def add_visited_url(self, url: str):
-        with self._lock:
-            self.visited_urls.add(url)
-            self.exploration_history.append(url)
+        self.visited_urls.add(url)
+        self.exploration_history.append(url)
     
     def update_best_result(self, result: ExplorationResult):
-        with self._lock:
-            self.all_results.append(result)
-            if (not self.current_best or 
-                (result.satisfies_goal and not self.current_best.satisfies_goal) or
-                (result.satisfies_goal == self.current_best.satisfies_goal and 
-                 result.confidence > self.current_best.confidence)):
-                self.current_best = result
+        self.all_results.append(result)
+        if (not self.current_best or 
+            (result.satisfies_goal and not self.current_best.satisfies_goal) or
+            (result.satisfies_goal == self.current_best.satisfies_goal and 
+             result.confidence > self.current_best.confidence)):
+            self.current_best = result
 
 
 def get_random_user_agent():
@@ -462,7 +457,7 @@ class BatchWebExplorer(Agent):
                 print(f"      {link.url}")
             
             # Explore this batch
-            batch_results = self._explore_batch_concurrently(context, driver, batch_links)
+            batch_results = self._explore_batch(context, driver, batch_links)
             pages_explored += len(batch_links)
             
             # Check results from this batch
@@ -507,38 +502,23 @@ class BatchWebExplorer(Agent):
         
         return best_result
     
-    def _explore_batch_concurrently(self, context: ExplorationContext, driver, batch_links: List[LinkScore]) -> List[ExplorationResult]:
-        """Explore a batch of links concurrently"""
+    def _explore_batch(self, context: ExplorationContext, driver, batch_links: List[LinkScore]) -> List[ExplorationResult]:
+        """Explore a batch of links sequentially"""
         batch_results = []
-        
-        with ThreadPoolExecutor(max_workers=min(context.max_concurrent, len(batch_links))) as executor:
-            # Submit exploration tasks
-            future_to_link = {}
-            for link in batch_links:
-                future = executor.submit(self._explore_single_page, context, driver, link)
-                future_to_link[future] = link
-            
-            # Collect results as they complete
-            completed = 0
-            for future in as_completed(future_to_link):
-                try:
-                    result = future.result()
-                    completed += 1
-                    link = future_to_link[future]
-                    
-                    if result:
-                        batch_results.append(result)
-                        anchor_text = link.context.get('anchor_text', 'Unknown')[:30]
-                        print(f"      ✓ [{completed}/{len(batch_links)}] {anchor_text}: {result.confidence:.1f}/10 conf, {result.data_type}")
-                    else:
-                        anchor_text = link.context.get('anchor_text', 'Unknown')[:30]
-                        print(f"      ❌ [{completed}/{len(batch_links)}] {anchor_text}: Failed to fetch")
-                        
-                except Exception as e:
-                    completed += 1
-                    link = future_to_link[future]
-                    print(f"      ❌ [{completed}/{len(batch_links)}] Error exploring {link.url}: {e}")
-        
+        completed = 0
+        for link in batch_links:
+            try:
+                result = self._explore_single_page(context, driver, link)
+                completed += 1
+                anchor_text = link.context.get('anchor_text', 'Unknown')[:30]
+                if result:
+                    batch_results.append(result)
+                    print(f"      ✓ [{completed}/{len(batch_links)}] {anchor_text}: {result.confidence:.1f}/10 conf, {result.data_type}")
+                else:
+                    print(f"      ❌ [{completed}/{len(batch_links)}] {anchor_text}: Failed to fetch")
+            except Exception as e:
+                completed += 1
+                print(f"      ❌ [{completed}/{len(batch_links)}] Error exploring {link.url}: {e}")
         return batch_results
     
     def _explore_single_page(self, context: ExplorationContext, driver, link_score: LinkScore) -> Optional[ExplorationResult]:
