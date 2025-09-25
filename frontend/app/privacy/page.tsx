@@ -1,5 +1,3 @@
-'use client';
-import React from 'react';
 import { Shield, Lock, Eye, Users, Globe, Settings, Mail, RefreshCw } from 'lucide-react';
 
 import Navigation from '../../components/landing/Navigation';

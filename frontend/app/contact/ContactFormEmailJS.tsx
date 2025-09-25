@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { Send } from 'lucide-react';
@@ -7,6 +8,7 @@ const ContactFormEmailJS = () => {
     name: '',
     email: '',
     subject: '',
+    subjectText: '',
     message: ''
   });
   const [sending, setSending] = useState(false);
@@ -27,9 +29,9 @@ const ContactFormEmailJS = () => {
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'YOUR SERVICE ID', 
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'YOUR TEMPLATE ID',
         {
-          name: form.name,
-          email: form.email,
-          title: form.subject,
+           user_name: form.name,
+           user_email: form.email,
+           subject: form.subject === 'other' ? form.subjectText : form.subject,
           message: form.message
         },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY 
@@ -62,12 +64,23 @@ const ContactFormEmailJS = () => {
           </div>
           <div className="mb-2 sm:mb-4">
             <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-            <select name="subject" required value={form.subject} onChange={handleChange} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select name="subject" required value={form.subject} onChange={handleChange} className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <option value="">Select a category</option>
               <option value="technical">Technical Support</option>
               <option value="feature">Feature Request</option>
               <option value="other">Other</option>
             </select>
+            {form.subject === "other" && (
+              <input
+                name="subjectText"
+                type="text"
+                required
+                value={form.subjectText}
+                onChange={handleChange}
+                className="mt-2 w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-400 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Type your subject..."
+              />
+            )}
           </div>
           <div className="mb-3 sm:mb-6">
             <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>

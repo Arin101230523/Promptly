@@ -1,5 +1,3 @@
-'use client';
-import React from 'react';
 import { FileText, Scale, Shield, AlertTriangle, Users, Gavel, Clock, Mail, CheckCircle } from 'lucide-react';
 
 import Navigation from '../../components/landing/Navigation';
