@@ -19,7 +19,7 @@ const generateStaticConnections = () => {
   const positions: number[] = [];
   const N = 30; 
   const seededRandom = (seed: number) => {
-    let x = Math.sin(seed) * 10000;
+    const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
   };
   
@@ -166,7 +166,7 @@ function InternetGlobe() {
   );
 }
 
-const BackgroundElements: React.FC<BackgroundElementsProps> = ({ backgroundY }) => {
+const BackgroundElements: React.FC<BackgroundElementsProps> = ({}) => {
   const { scrollYProgress } = useScroll();
   const globeOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
 

@@ -38,7 +38,7 @@ const ContactFormEmailJS = () => {
       );
       setSent(true);
     } catch (err) {
-      setError('Failed to send. Please try again.');
+      setError('Failed to send. Please try again.' + (err instanceof Error ? err.message : ''));
     }
     setSending(false);
   };

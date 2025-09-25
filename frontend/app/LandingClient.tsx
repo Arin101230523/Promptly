@@ -14,7 +14,7 @@ import CTASection from '../components/landing/CTASection';
 import Footer from '../components/landing/Footer';
 import BackgroundElements from '../components/landing/BackgroundElements';
 import ProgressBarAndScrollButton from '../components/landing/ProgressBarAndScrollButton';
-import { Globe, Brain, Zap, BarChart, Target, TrendingUp, Users, Database, Lock, ShieldCheck, Github } from 'lucide-react';
+import { Globe, Brain, Zap, BarChart, Target, TrendingUp, Users, Database, ShieldCheck, Github } from 'lucide-react';
 
 function LandingClient() {
   const [mounted, setMounted] = useState(false);
