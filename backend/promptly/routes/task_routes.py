@@ -86,11 +86,6 @@ def run_task(task_id: str):
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-images")
         
-        
-        # Logging reduction
-        chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        chrome_options.add_argument("--log-level=3")
-        
         # Random user agent
         chrome_options.add_argument(f"user-agent={get_random_user_agent()}")
         

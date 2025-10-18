@@ -3,11 +3,12 @@ FROM python:3.11-slim
 WORKDIR /backend
 COPY . /backend
 
-# installing google-chrome-stable via curl
-RUN apt-get update && apt-get install -y curl && \
-    curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb
+# Install Chromium and ChromeDriver
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-chromedriver \
+    curl && \
+    apt-get clean
 
 RUN pip install --no-cache-dir -r requirements.txt
 
