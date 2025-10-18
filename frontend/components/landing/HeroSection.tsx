@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { MotionValue } from 'framer-motion';
+import Link from 'next/link';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -87,14 +88,15 @@ const HeroSection = ({ heroY }: HeroSectionProps) => {
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
           </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 sm:px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-base sm:text-lg backdrop-blur-sm hover:bg-white/10 transition-all w-full sm:w-auto cursor-pointer"
-            onClick={() => router.push('/docs')}
-          >
-            See our Docs
-          </motion.button>
+          <Link href="https://github.com/Arin101230523/Promptly">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 sm:px-8 py-4 border-2 border-white/20 rounded-2xl font-semibold text-base sm:text-lg backdrop-blur-sm hover:bg-white/10 transition-all w-full sm:w-auto cursor-pointer"
+            >
+              View Source on GitHub
+            </motion.button>
+          </Link>
         </motion.div>
         {/* Scroll Indicator */}
         <motion.div

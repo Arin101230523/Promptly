@@ -166,7 +166,7 @@ Return only a JSON object:
 
         try:
             response = self.ai_client.chat.completions.create(
-                model="gemma2-9b-it",
+                model="openai/gpt-oss-20b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
             )
@@ -244,7 +244,7 @@ Return JSON:
 
         try:
             response = self.ai_client.chat.completions.create(
-                model="gemma2-9b-it",
+                model="openai/gpt-oss-20b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
             )
