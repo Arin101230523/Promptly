@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap } from 'lucide-react';
+import Image from 'next/image';
 
 interface ChatHistorySidebarProps {
   showHistory: boolean;
@@ -14,7 +14,7 @@ const ChatHistorySidebar: React.FC<ChatHistorySidebarProps> = ({ showHistory, se
   >
     <div className="flex flex-col items-center gap-4 mt-8">
       <div className="bg-gradient-to-r from-pink-400 to-orange-500 rounded-full p-4 animate-bounce">
-      <img src = "/favicon.ico" alt = "Logo" className='w-8 h-8' />
+        <Image src='/favicon.ico' alt="Logo" width={32} height={32} className="object-contain" />
       </div>
       <h2 className="text-xl font-bold text-white">Chat History</h2>
       <p className="text-sm text-gray-400 text-center">Coming Soon...</p>
