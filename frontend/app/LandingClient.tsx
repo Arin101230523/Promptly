@@ -83,7 +83,8 @@ function LandingClient() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-red-900 to-neutral-900 text-white overflow-x-hidden relative">
+
       <BackgroundElements backgroundY={backgroundY} />
       <Navigation />
       <HeroSection heroY={heroY} />
