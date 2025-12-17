@@ -29,6 +29,8 @@ export default function ScraperPage() {
   const [editGoal, setEditGoal] = useState('');
   const [editUrl, setEditUrl] = useState('');
   const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
+  const [serviceDown, setServiceDown] = useState(true);
+  
   useEffect(() => {
     if (shouldScrollToBottom && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -251,6 +253,29 @@ export default function ScraperPage() {
         />
       </div>
       <HoverSidebar showHistory={showHistory} setShowHistory={setShowHistory} />
+      {serviceDown && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full text-center shadow-xl">
+      <AlertCircle className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
+
+      <h2 className="text-lg font-semibold text-white mb-2">
+        Service Temporarily Unavailable
+      </h2>
+
+      <p className="text-slate-300 text-sm mb-6">
+        The scraper service is currently offline due to temporary capacity limits.
+        Please check back later.
+      </p>
+
+      <button
+        onClick={() => setServiceDown(false)}
+        className="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 text-white text-sm transition"
+      >
+        Dismiss
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
