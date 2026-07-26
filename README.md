@@ -13,7 +13,7 @@ The project explores the intersection of semantic search, multi-agent reasoning,
 
 ---
 
-## Table of Contents
+# Table of Contents
 
 - [Motivation](#motivation)
 - [System Overview](#system-overview)
@@ -25,7 +25,8 @@ The project explores the intersection of semantic search, multi-agent reasoning,
 - [Architecture](#architecture)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Example Workflow](#example-workflow)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
 - [Why Promptly?](#why-promptly)
 
 ---
@@ -47,11 +48,7 @@ For example:
 
 > "Find enterprise pricing."
 
-or
-
 > "Locate the API rate limits."
-
-or
 
 > "Identify whether this company supports SAML authentication."
 
@@ -82,7 +79,7 @@ Rather than evaluating these individually, Promptly embeds each candidate into s
 
 The embeddings allow links discussing similar concepts to be clustered together before traversal.
 
-For example, links such as
+For example, links such as:
 
 - Pricing
 - Enterprise
@@ -109,9 +106,9 @@ Each exploration step selects a batch of high-confidence candidates, allowing th
 
 This approach balances:
 
-- search breadth
-- computational cost
-- exploration speed
+- Search breadth
+- Computational cost
+- Exploration speed
 
 while avoiding early commitment to a single potentially incorrect path.
 
@@ -121,18 +118,18 @@ while avoiding early commitment to a single potentially incorrect path.
 
 After each exploration batch, an LLM evaluates the collected context against the original objective.
 
-Instead of simply asking
+Instead of simply asking:
 
 > "What page should I visit next?"
 
 the model estimates whether the current branch appears likely to satisfy the user's goal.
 
-Based on this confidence score the system decides to
+Based on this confidence score, the system decides to:
 
-- continue deeper,
-- backtrack,
-- terminate exploration,
-- or prioritize an alternate branch.
+- Continue deeper
+- Backtrack
+- Terminate exploration
+- Prioritize an alternate branch
 
 This produces adaptive navigation rather than deterministic crawling.
 
@@ -186,14 +183,14 @@ flowchart TD
 
 # Features
 
-### Intelligent Website Navigation
+## Intelligent Website Navigation
 
 - Semantic ranking of discovered links
 - Batch-based exploration across multiple navigation paths
 - Adaptive traversal using LLM confidence evaluation
 - Automatic backtracking when exploration confidence decreases
 
-### Autonomous Workflow Execution
+## Autonomous Workflow Execution
 
 - Dynamic REST endpoint generation
 - Asynchronous task execution
@@ -201,7 +198,7 @@ flowchart TD
 - Concurrent workflow isolation
 - Persistent task tracking
 
-### Agentic Reporting
+## Agentic Reporting
 
 - Automatic result summarization
 - Email delivery of completed workflows
@@ -247,22 +244,95 @@ flowchart TD
 
 ---
 
-# Example Workflow
+# Getting Started
 
-A user submits
+## Running with Docker Compose
 
-> "Find the enterprise pricing page for Example.com."
+Build and start all services:
 
-The system then
+```bash
+docker compose up --build
+```
 
-1. Creates a new task.
-2. Begins exploring from the provided URL.
-3. Embeds and clusters discovered links.
-4. Selects the most promising navigation branches.
-5. Uses an LLM to determine whether progress is being made.
-6. Continues exploration until pricing information is found.
-7. Stores the results.
-8. Sends a summarized report via email.
+Run in detached mode:
+
+```bash
+docker compose up --build -d
+```
+
+View logs:
+
+```bash
+docker compose logs -f
+```
+
+Stop all services:
+
+```bash
+docker compose down
+```
+
+Once running, the API will be available at:
+
+```text
+http://localhost:8000
+```
+
+> [!NOTE]
+> Adjust the port if your `docker-compose.yml` exposes a different one.
+
+---
+
+# Usage
+
+## 1. Submit an Exploration Task
+
+Each task dynamically provisions its own endpoint.
+
+Example:
+
+```bash
+curl -X POST http://localhost:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+        "goal": "Find pricing information for enterprise plans",
+        "start_url": "https://example.com",
+        "email_to": "you@example.com",
+        "max_depth": 5,
+        "batch_size": 10
+      }'
+```
+
+Example response:
+
+```json
+{
+  "task_id": "abc123",
+  "endpoint": "/tasks/abc123",
+  "status": "queued"
+}
+```
+
+---
+
+## 2. Check Task Status
+
+Monitor progress through the generated task endpoint:
+
+```bash
+curl http://localhost:8000/tasks/abc123
+```
+
+---
+
+## 3. Receive Results
+
+Once execution completes:
+
+- Exploration results are stored.
+- An LLM summarizes the findings.
+- A report is automatically delivered via email.
+- Results remain accessible through the task endpoint.
 
 ---
 
