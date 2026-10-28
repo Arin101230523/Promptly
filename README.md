@@ -1,33 +1,30 @@
 # Promptly
 
 > [!TIP]
-> Promptly lets users specify **what** they want instead of **how** to navigate a website. It combines semantic search, multi-agent exploration, LLM reasoning, and containerized browser automation to autonomously complete web-based tasks.
+> Promptly is an agentic harness that lets users specify **what** they want instead of **how** to navigate a website. It wraps an LLM in a structured agent loop that combines semantic search, value-guided exploration, and sandboxed browser execution to autonomously complete web-based tasks.
 
-Promptly is an agentic web automation platform that transforms high-level goals into autonomous browser workflows.
+Promptly is an agentic harness for long-horizon web tasks. Most web agents today are a single LLM picking the next click in a loop, and they break down on complex, interactive websites. [WebLists](https://arxiv.org/abs/2504.12682) (Bohra et al., 2025) found that state-of-the-art web agents reached only 31% recall on structured extraction tasks, and LLMs with search reached just 3%.
 
-Traditional web automation tools rely on handcrafted scripts that only work for websites they were explicitly written for. Promptly instead approaches automation as a search problem: given a goal and a starting website, it incrementally explores pages, evaluates whether it is making meaningful progress, and adapts its strategy until it either satisfies the objective or determines that no relevant information exists.
-
-To support long-running automation tasks, Promptly also provides a backend execution platform that dynamically provisions REST endpoints for submitted jobs, executes each workflow asynchronously inside an isolated container, and automatically summarizes results through an LLM-powered email agent.
-
-The project explores the intersection of semantic search, multi-agent reasoning, browser automation, and distributed task execution to build a more flexible alternative to traditional rule-based web automation.
+Promptly instead treats every website as its own search space. Given a goal and a starting URL, the harness explores pages, uses the LLM to estimate whether each path is making progress, and decides whether to go deeper, backtrack, or stop. Each run executes asynchronously in an isolated container, and the results are summarized and delivered by an LLM reporting agent.
 
 ---
 
 # Table of Contents
 
 - [Motivation](#motivation)
+- [Design Principles](#design-principles)
 - [System Overview](#system-overview)
-- [Goal-Directed Website Exploration](#goal-directed-website-exploration)
-  - [Semantic Candidate Ranking](#semantic-candidate-ranking)
-  - [Batch-Based Exploration](#batch-based-exploration)
-  - [LLM Confidence Gating](#llm-confidence-gating)
-- [Dynamic Task Execution](#dynamic-task-execution)
+- [The Agent Loop](#the-agent-loop)
+- [Search Policy](#search-policy)
+  - [Semantic Prior](#semantic-prior)
+  - [Beam Exploration](#beam-exploration)
+  - [LLM Value Function](#llm-value-function)
+- [Execution Runtime](#execution-runtime)
 - [Architecture](#architecture)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [Why Promptly?](#why-promptly)
 
 ---
 
@@ -35,14 +32,21 @@ The project explores the intersection of semantic search, multi-agent reasoning,
 
 Most browser automation frameworks (Selenium, Playwright, Puppeteer, etc.) assume the developer already knows exactly which pages to visit and which elements to interact with.
 
-That assumption breaks down for many real-world tasks:
+LLM agents remove the need for handwritten scripts, but a naive agent loop introduces its own problems:
+
+- The model commits to a single path and rarely recovers from a bad first choice.
+- Every page is passed to the LLM, which makes runs slow and expensive.
+- There is no explicit budget, so cost and latency are unpredictable.
+- The agent has no principled way to decide that the information simply is not there.
+
+Real-world websites make this harder:
 
 - Company websites all have different navigation structures.
 - Documentation sites organize information differently.
 - Internal dashboards frequently change layouts.
 - Useful information is often buried behind multiple navigation layers.
 
-Rather than scripting every interaction manually, Promptly allows a user to specify **what** they want instead of **how** to obtain it.
+Promptly allows a user to specify **what** they want, and relies on the harness to make the agent reliable enough to figure out **how**.
 
 For example:
 
@@ -52,7 +56,31 @@ For example:
 
 > "Identify whether this company supports SAML authentication."
 
-Promptly autonomously determines where to navigate, evaluates which paths appear promising, and continues exploring until enough evidence has been collected to answer the request.
+The harness determines where to navigate, evaluates which paths appear promising, and continues exploring until enough evidence has been collected to answer the request.
+
+---
+
+# Design Principles
+
+## The harness owns control flow, the model owns judgment
+
+The LLM is not asked an open-ended question like "what should I click next?" It is asked whether the current branch is likely to satisfy the goal. The harness uses that estimate to decide whether to go deeper, backtrack, switch branches, or stop.
+
+## Every website is its own search space
+
+No two websites share the same structure, so Promptly makes no assumptions about layout or navigation. Each run builds its own search tree over the site it is given, where pages are states, links are actions, and the LLM's confidence acts as the value of each state. The same harness works on a site it has never seen before because it searches the site instead of following a script written for it.
+
+## Spend compute where it matters
+
+Expensive LLM calls are reserved for judgment. Breadth is handled by a lightweight embedding model that ranks and clusters candidate actions, so the LLM only ever sees a small, high-value set of options.
+
+## Explicit budgets
+
+Every run has hard limits (`max_depth` and `batch_size`), which keeps cost and latency predictable. This is what makes it practical to run agents as a service instead of as a one-off demo.
+
+## Isolated, durable, inspectable runs
+
+Each task executes in its own container with persisted state. Many agents can run concurrently without interfering with one another, and every trajectory can be inspected after the run finishes.
 
 ---
 
@@ -60,24 +88,45 @@ Promptly autonomously determines where to navigate, evaluates which paths appear
 
 The platform consists of two major subsystems:
 
-1. **Goal-Directed Website Exploration**
-2. **Dynamic Task Execution**
+1. **The Agent Harness**, which runs a value-guided search over live websites.
+2. **The Execution Runtime**, which schedules, isolates, persists, and reports on agent runs.
 
-Together these allow users to submit high-level objectives while the backend independently discovers relevant information and executes long-running workflows.
+Together these allow users to submit high-level objectives while the backend independently discovers relevant information and manages long-running agent workloads.
 
 ---
 
-# Goal-Directed Website Exploration
+# The Agent Loop
 
-Instead of blindly crawling every page, Promptly continuously prioritizes where it should explore next.
+Every step of a run follows the same cycle:
 
-## Semantic Candidate Ranking
+```
+observe -> propose -> rank -> expand -> evaluate -> decide
+   ^                                                  |
+   |------------- continue / backtrack <--------------|
+                              |
+                         terminate -> summarize -> report
+```
 
-Every page generates a collection of candidate links.
+- **Observe:** Render the page in a real browser and extract its text and candidate links.
+- **Propose:** Treat every outgoing link as a candidate action.
+- **Rank:** Embed the candidates, cluster them by concept, and score them against the goal.
+- **Expand:** Visit the top candidates as a batch.
+- **Evaluate:** Ask the LLM how likely each branch is to satisfy the goal.
+- **Decide:** Continue deeper, backtrack, switch branches, or terminate.
 
-Rather than evaluating these individually, Promptly embeds each candidate into semantic vector space using Sentence Transformers.
+---
 
-The embeddings allow links discussing similar concepts to be clustered together before traversal.
+# Search Policy
+
+Instead of blindly crawling every page or letting the model wander, the harness continuously prioritizes where the agent should explore next.
+
+## Semantic Prior
+
+Every page generates a collection of candidate links, and a single page can expose hundreds of them.
+
+Rather than passing all of them to the LLM, Promptly embeds each candidate into semantic vector space using Sentence Transformers. This gives the harness a cheap, goal-conditioned prior over which actions are worth considering.
+
+The embeddings also allow links discussing similar concepts to be clustered together before traversal.
 
 For example, links such as:
 
@@ -88,21 +137,21 @@ For example, links such as:
 
 naturally cluster together even if their URLs share little lexical similarity.
 
-This significantly reduces redundant exploration while improving the likelihood of discovering relevant content early.
+This significantly reduces redundant exploration, keeps the LLM's context small, and improves the likelihood of discovering relevant content early.
 
 ---
 
-## Batch-Based Exploration
+## Beam Exploration
 
-Traditional crawlers typically perform either:
+Traditional crawlers and simple agents typically perform either:
 
 - Breadth-first search
 - Depth-first search
 - Greedy single-path traversal
 
-Promptly instead evaluates multiple promising paths simultaneously.
+Promptly instead runs a beam search, evaluating multiple promising paths simultaneously.
 
-Each exploration step selects a batch of high-confidence candidates, allowing the system to diversify exploration without fully expanding the search tree.
+Each exploration step selects a batch of high-confidence candidates, which keeps several hypotheses alive at once without fully expanding the search tree. One misleading link is no longer enough to derail the whole run.
 
 This approach balances:
 
@@ -114,44 +163,46 @@ while avoiding early commitment to a single potentially incorrect path.
 
 ---
 
-## LLM Confidence Gating
+## LLM Value Function
 
-After each exploration batch, an LLM evaluates the collected context against the original objective.
+After each exploration batch, an LLM evaluates the collected evidence against the original objective.
 
 Instead of simply asking:
 
 > "What page should I visit next?"
 
-the model estimates whether the current branch appears likely to satisfy the user's goal.
+the model acts as a value function, estimating whether the current branch appears likely to satisfy the user's goal.
 
-Based on this confidence score, the system decides to:
+Based on this confidence score, the harness decides to:
 
 - Continue deeper
 - Backtrack
-- Terminate exploration
 - Prioritize an alternate branch
+- Terminate exploration
 
-This produces adaptive navigation rather than deterministic crawling.
+Termination covers two cases. Either enough evidence has been collected to answer the request, or the search space has been exhausted and the harness concludes that the information does not exist. Being able to say "this isn't here" instead of hallucinating an answer or looping until the budget runs out is a core part of what makes the agent reliable.
+
+This produces adaptive, goal-directed navigation rather than deterministic crawling.
 
 ---
 
-# Dynamic Task Execution
+# Execution Runtime
 
-Website exploration is only one part of the platform.
+The agent harness is only one part of the platform.
 
-Promptly also acts as an execution backend for autonomous browser workflows.
+Promptly also provides a runtime built for long-running, concurrent agent workloads.
 
 When a task is submitted:
 
 1. A unique task identifier is created.
 2. A REST endpoint is generated for the task.
-3. Execution begins asynchronously.
-4. Browser automation runs inside an isolated Docker container.
-5. Progress is persisted throughout execution.
+3. The agent run is scheduled asynchronously.
+4. The agent executes inside an isolated Docker container with its own browser session.
+5. Trajectory state and intermediate results are persisted throughout execution.
 6. Results become available through the task endpoint.
-7. An LLM summarizes findings and delivers them via email.
+7. A summarization agent condenses the trajectory into a grounded report and delivers it via email.
 
-Because every workflow executes independently, multiple automation jobs can run concurrently without interfering with one another.
+Because every run is sandboxed and stateful, multiple agents can run concurrently without interfering with one another, failures stay contained, and every run leaves an inspectable record.
 
 ---
 
@@ -162,46 +213,55 @@ flowchart TD
     U[User] -->|POST /tasks| API[FastAPI Backend]
 
     API --> TM[Task Manager]
-    API --> REQ[Dynamic REST Endpoint]
+    API --> EP[Dynamic REST Endpoint]
 
-    TM --> EA[Exploration Agent]
+    TM --> W[Sandboxed Docker Worker]
 
-    EA --> SR[Semantic Link Ranking]
-    SR --> BT[Batch-Based Traversal]
-    BT --> CG[LLM Confidence Gating]
+    subgraph Harness["Agent Harness (per run)"]
+        direction TB
+        OBS[Observe: Selenium Browser] --> PROP[Propose: Candidate Actions]
+        PROP --> RANK[Semantic Prior: Embed + Cluster]
+        RANK --> BEAM[Beam Exploration]
+        BEAM --> VAL[LLM Value Function]
+        VAL --> CTRL{Controller}
+        CTRL -->|continue / switch| OBS
+        CTRL -->|backtrack| BEAM
+    end
 
-    CG --> DW[Docker Worker]
-    DW --> SEL[Selenium Browser]
-
-    SEL --> DB[(MongoDB)]
-
-    DB --> LLM[LLM Summary Agent]
-    LLM --> EMAIL[Email Delivery]
+    W --> Harness
+    Harness -->|trajectory + evidence| DB[(MongoDB)]
+    CTRL -->|terminate| SUM[Summarization Agent]
+    DB --> SUM
+    SUM --> EMAIL[Email Delivery]
+    DB --> EP
 ```
 
 ---
 
 # Features
 
-## Intelligent Website Navigation
+## Agent Harness
 
-- Semantic ranking of discovered links
-- Batch-based exploration across multiple navigation paths
-- Adaptive traversal using LLM confidence evaluation
-- Automatic backtracking when exploration confidence decreases
+- Structured observe, propose, rank, expand, evaluate, decide loop
+- Semantic prior over candidate actions
+- Beam search across multiple navigation paths
+- LLM value function for branch evaluation
+- Automatic backtracking when confidence decreases
+- Explicit termination when the answer is found or does not exist
+- Hard compute budgets per run
 
-## Autonomous Workflow Execution
+## Execution Runtime
 
 - Dynamic REST endpoint generation
-- Asynchronous task execution
-- Containerized browser sessions
-- Concurrent workflow isolation
-- Persistent task tracking
+- Asynchronous agent execution
+- Sandboxed, containerized browser sessions
+- Concurrent run isolation
+- Persistent trajectory and task tracking
 
 ## Agentic Reporting
 
 - Automatic result summarization
-- Email delivery of completed workflows
+- Email delivery of completed runs
 - Structured execution metadata
 - Persistent task history
 
@@ -285,7 +345,7 @@ http://localhost:8000
 
 # Usage
 
-## 1. Submit an Exploration Task
+## 1. Launch an Agent Run
 
 Each task dynamically provisions its own endpoint.
 
@@ -303,6 +363,12 @@ curl -X POST http://localhost:8000/tasks \
       }'
 ```
 
+- `goal`: the natural-language objective the value function scores against
+- `start_url`: the root of the search
+- `max_depth`: the maximum trajectory length
+- `batch_size`: the beam width, or number of candidates expanded per step
+- `email_to`: where the final report is delivered
+
 Example response:
 
 ```json
@@ -315,7 +381,7 @@ Example response:
 
 ---
 
-## 2. Check Task Status
+## 2. Check Run Status
 
 Monitor progress through the generated task endpoint:
 
@@ -327,21 +393,9 @@ curl http://localhost:8000/tasks/abc123
 
 ## 3. Receive Results
 
-Once execution completes:
+Once the harness terminates the run:
 
-- Exploration results are stored.
-- An LLM summarizes the findings.
-- A report is automatically delivered via email.
+- The trajectory and collected evidence are stored.
+- A summarization agent writes a grounded report.
+- The report is automatically delivered via email.
 - Results remain accessible through the task endpoint.
-
----
-
-# Why Promptly?
-
-Most automation platforms require developers to encode every interaction manually.
-
-Promptly instead separates **intent** from **execution**.
-
-Rather than specifying every click, the user specifies the desired outcome while the platform determines how to reach it through semantic reasoning, adaptive exploration, and autonomous execution.
-
-The result is a backend capable of operating across unfamiliar websites with significantly less task-specific engineering than traditional rule-based automation systems.
